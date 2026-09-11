@@ -1,0 +1,1137 @@
+
+  /* ============================================================
+     MARCAS FAVORITAS — DISEÑO MODERNO
+     ============================================================ */
+
+  .marcas-favoritas {
+    width: 100%;
+    background: #ffffff;
+    padding: 65px 0 55px;
+    overflow: hidden;
+  }
+
+.marcas-favoritas__container {
+  width: 100%;
+  max-width: 1550px;
+  margin: 0 auto;
+  padding: 0 65px;
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   TÍTULO
+   ============================================================ */
+
+.marcas-favoritas__title {
+  margin: 0 0 48px;
+  text-align: center;
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -1.2px;
+  color: #181818;
+  font-family: 'Varela Round', sans-serif;
+}
+
+.marcas-favoritas__title .orange {
+  color: #7fb32c;
+}
+
+
+
+/* ============================================================
+   SLIDER
+   ============================================================ */
+
+.marcas-favoritas__slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.marcas-favoritas__track {
+  display: flex;
+  width: 100%;
+
+  transition:
+    transform 0.65s cubic-bezier(.22, .61, .36, 1);
+}
+
+
+/* ============================================================
+   SLIDE
+   ============================================================ */
+
+.marcas-favoritas__slide {
+  flex: 0 0 100%;
+  width: 100%;
+
+  display: grid;
+
+  /*
+     6 columnas x 2 filas
+  */
+
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+
+  grid-template-rows:
+    repeat(2, 140px);
+
+  gap: 22px;
+
+  padding: 10px 45px;
+
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   ESPACIO DE CADA MARCA
+   ============================================================ */
+
+.marca-logo {
+
+  width: 100%;
+  height: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px;
+
+  box-sizing: border-box;
+
+  /*
+     Diseño tipo tarjeta premium
+  */
+
+  background: #ffffff;
+
+  border: 1px solid #eeeeee;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.035);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
+
+}
+
+
+/* ============================================================
+   HOVER CARD
+   ============================================================ */
+
+.marca-logo:hover {
+
+  transform: translateY(-6px);
+
+  border-color: rgba(237, 114, 3, 0.18);
+
+  background: #fffdfb;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.09);
+
+}
+
+
+/* ============================================================
+   LOGOS
+   ============================================================ */
+
+.marca-logo img {
+
+  display: block;
+
+  /*
+     AQUÍ AUMENTAMOS EL TAMAÑO
+  */
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 188px;
+  max-height: 100px;
+
+  object-fit: contain;
+  object-position: center;
+
+  /*
+     Evita deformación
+  */
+
+  transition:
+    transform 0.3s ease;
+}
+
+
+/* ============================================================
+   HOVER LOGO
+   ============================================================ */
+
+.marca-logo:hover img {
+
+  transform: scale(1.08);
+
+}
+
+
+/* ============================================================
+   FLECHAS
+   ============================================================ */
+
+.marcas-favoritas__arrow {
+
+  position: absolute;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #eeeeee;
+
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.98);
+
+  color: #7fb32c;
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,0.10);
+
+  cursor: pointer;
+
+  z-index: 10;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+
+.marcas-favoritas__arrow:hover {
+
+  transform:
+    translateY(-50%)
+    scale(1.10);
+
+  background: #fff8f3;
+
+  box-shadow:
+    0 8px 25px rgba(237,114,3,0.18);
+
+}
+
+
+.marcas-favoritas__arrow span {
+
+  font-size: 34px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  margin-top: -3px;
+
+}
+
+
+.marcas-favoritas__arrow--prev {
+
+  left: 0;
+
+}
+
+
+.marcas-favoritas__arrow--next {
+
+  right: 0;
+
+}
+
+
+/* ============================================================
+   INDICADORES
+   ============================================================ */
+
+.marcas-favoritas__dots {
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 30px;
+
+}
+
+
+.marcas-favoritas__dot {
+
+  width: 8px;
+  height: 8px;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 20px;
+
+  background: #d7d7d7;
+
+  cursor: pointer;
+
+  transition:
+    width 0.3s ease,
+    background 0.3s ease;
+
+}
+
+
+.marcas-favoritas__dot.active {
+
+  width: 28px;
+
+  background: #7fb32c;
+
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media screen and (max-width: 1000px) {
+
+  .marcas-favoritas {
+
+    padding:
+      50px 0 40px;
+
+  }
+
+
+  .marcas-favoritas__container {
+
+    padding:
+      0 55px;
+
+  }
+
+
+  .marcas-favoritas__title {
+
+    font-size: 34px;
+
+    margin-bottom: 38px;
+
+  }
+
+
+  .marcas-favoritas__slide {
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    grid-template-rows:
+      repeat(2, 124px);
+
+    gap: 18px;
+
+    padding:
+      10px 25px;
+
+  }
+
+
+  .marca-logo {
+
+    height: 124px;
+
+    padding: 12px;
+
+  }
+
+
+  .marca-logo img {
+
+    max-width: 148px;
+
+    max-height: 84px;
+
+  }
+
+}
+
+
+/* ============================================================
+   MÓVIL
+   ============================================================ */
+
+@media screen and (max-width: 600px) {
+
+  .marcas-favoritas {
+
+    padding:
+      38px 0 30px;
+
+  }
+
+
+  .marcas-favoritas__container {
+
+    padding:
+      0 38px;
+
+  }
+
+
+  .marcas-favoritas__title {
+
+    font-size: 25px;
+
+    letter-spacing: -0.5px;
+
+    margin-bottom: 28px;
+
+  }
+
+
+  .marcas-favoritas__star {
+
+    font-size: 18px;
+
+    margin:
+      0 4px;
+
+  }
+
+
+  .marcas-favoritas__slide {
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    grid-template-rows:
+      repeat(3, 96px);
+
+    gap: 13px;
+
+    padding:
+      5px;
+
+  }
+
+
+  .marca-logo {
+
+    height: 96px;
+
+    padding: 8px;
+
+    border-radius: 11px;
+
+  }
+
+
+  .marca-logo img {
+
+    max-width: 108px;
+
+    max-height: 60px;
+
+  }
+
+
+  .marca-logo:hover {
+
+    transform:
+      translateY(-3px);
+
+  }
+
+
+  .marca-logo:hover img {
+
+    transform:
+      scale(1.05);
+
+  }
+
+
+  .marcas-favoritas__arrow {
+
+    width: 36px;
+
+    height: 42px;
+
+    border-radius: 8px;
+
+  }
+
+
+  .marcas-favoritas__arrow span {
+
+    font-size: 28px;
+
+  }
+
+
+  .marcas-favoritas__arrow--prev {
+
+    left: 0;
+
+  }
+
+
+  .marcas-favoritas__arrow--next {
+
+    right: 0;
+
+  }
+
+
+  .marcas-favoritas__dots {
+
+    margin-top: 22px;
+
+  }
+
+
+  .marcas-favoritas__dot {
+
+    width: 7px;
+
+    height: 7px;
+
+  }
+
+
+  .marcas-favoritas__dot.active {
+
+    width: 21px;
+
+  }
+
+}
+{% endstylesheet %}
+
+<section
+  class="marcas-favoritas"
+  id="marcas-favoritas-{{ section.id }}"
+>
+
+  <div class="marcas-favoritas__container">
+
+
+    <!-- ======================================================
+         TÍTULO
+         ====================================================== -->
+
+    <h2 class="marcas-favoritas__title">
+
+
+      Tus marcas
+      <span class="orange">
+        favoritas
+      </span>
+
+
+    </h2>
+
+
+    <!-- ======================================================
+         CARRUSEL
+         ====================================================== -->
+
+    <div class="marcas-favoritas__slider">
+
+
+      <div class="marcas-favoritas__track">
+
+
+        <!-- ==================================================
+             SLIDE 1
+             ================================================== -->
+
+        <div class="marcas-favoritas__slide">
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/norma (1).webp"
+              alt="Marca 1"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/scribe.webp"
+              alt="Marca 2"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 6.svg"
+              alt="Marca 3"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 7.svg"
+              alt="Marca 4"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 8.svg"
+              alt="Marca 5"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 9.svg"
+              alt="Marca 6"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 10.svg"
+              alt="Marca 7"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 11.svg"
+              alt="Marca 8"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 12.svg"
+              alt="Marca 9"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 13.svg"
+              alt="Marca 10"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 14.svg"
+              alt="Marca 11"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 15.svg"
+              alt="Marca 12"
+              loading="lazy"
+            >
+          </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+             SLIDE 2
+             ================================================== -->
+
+        <div class="marcas-favoritas__slide">
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 16.svg"
+              alt="Marca 13"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 17.svg"
+              alt="Marca 14"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 18.svg"
+              alt="Marca 15"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 19.svg"
+              alt="Marca 16"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 20.svg"
+              alt="Marca 17"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 21.svg"
+              alt="Marca 18"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 22.svg"
+              alt="Marca 19"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 23.svg"
+              alt="Marca 20"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 24.svg"
+              alt="Marca 21"
+              loading="lazy"
+            >
+          </div>
+
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 25.svg"
+              alt="Marca 22"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 26.svg"
+              alt="Marca 23"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="marca-logo">
+            <img
+              src="SVG/icoArtboard 27.svg"
+              alt="Marca 24"
+              loading="lazy"
+            >
+          </div>
+
+
+
+        </div>
+
+        
+
+
+      </div>
+
+
+      <!-- ====================================================
+           FLECHA IZQUIERDA
+           ==================================================== -->
+
+      <button
+        class="marcas-favoritas__arrow marcas-favoritas__arrow--prev"
+        type="button"
+        aria-label="Marcas anteriores"
+      >
+
+        <span>‹</span>
+
+      </button>
+
+
+      <!-- ====================================================
+           FLECHA DERECHA
+           ==================================================== -->
+
+      <button
+        class="marcas-favoritas__arrow marcas-favoritas__arrow--next"
+        type="button"
+        aria-label="Más marcas"
+      >
+
+        <span>›</span>
+
+      </button>
+
+
+    </div>
+
+
+    <!-- ======================================================
+         PUNTOS
+         ====================================================== -->
+
+    <div class="marcas-favoritas__dots">
+
+
+      <button
+        class="marcas-favoritas__dot active"
+        type="button"
+        aria-label="Página 1"
+      ></button>
+
+
+      <button
+        class="marcas-favoritas__dot"
+        type="button"
+        aria-label="Página 2"
+      ></button>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<script>
+(function () {
+
+  const section =
+    document.getElementById(
+      'marcas-favoritas-{{ section.id }}'
+    );
+
+  if (!section) return;
+
+
+  const track =
+    section.querySelector(
+      '.marcas-favoritas__track'
+    );
+
+
+  const slides =
+    section.querySelectorAll(
+      '.marcas-favoritas__slide'
+    );
+
+
+  const dots =
+    section.querySelectorAll(
+      '.marcas-favoritas__dot'
+    );
+
+
+  const prev =
+    section.querySelector(
+      '.marcas-favoritas__arrow--prev'
+    );
+
+
+  const next =
+    section.querySelector(
+      '.marcas-favoritas__arrow--next'
+    );
+
+
+  let current = 0;
+
+  let autoplay = null;
+
+
+  function showSlide(index) {
+
+    if (index < 0) {
+
+      index =
+        slides.length - 1;
+
+    }
+
+
+    if (index >= slides.length) {
+
+      index = 0;
+
+    }
+
+
+    current = index;
+
+
+    track.style.transform =
+      'translate3d(-' +
+      (current * 100) +
+      '%, 0, 0)';
+
+
+    dots.forEach(
+      function (dot, i) {
+
+        dot.classList.toggle(
+          'active',
+          i === current
+        );
+
+      }
+    );
+
+  }
+
+
+  function stopAutoplay() {
+
+    if (autoplay) {
+
+      clearInterval(autoplay);
+
+      autoplay = null;
+
+    }
+
+  }
+
+
+  function startAutoplay() {
+
+    stopAutoplay();
+
+    autoplay =
+      setInterval(
+        function () {
+
+          showSlide(
+            current + 1
+          );
+
+        },
+        6000
+      );
+
+  }
+
+
+  if (prev) {
+
+    prev.addEventListener(
+      'click',
+      function () {
+
+        showSlide(
+          current - 1
+        );
+
+        startAutoplay();
+
+      }
+    );
+
+  }
+
+
+  if (next) {
+
+    next.addEventListener(
+      'click',
+      function () {
+
+        showSlide(
+          current + 1
+        );
+
+        startAutoplay();
+
+      }
+    );
+
+  }
+
+
+  dots.forEach(
+    function (dot, index) {
+
+      dot.addEventListener(
+        'click',
+        function () {
+
+          showSlide(index);
+
+          startAutoplay();
+
+        }
+      );
+
+    }
+  );
+
+
+  /*
+     Pausar al pasar el mouse
+  */
+
+  section.addEventListener(
+    'mouseenter',
+    stopAutoplay
+  );
+
+
+  section.addEventListener(
+    'mouseleave',
+    startAutoplay
+  );
+
+
+  /*
+     Swipe para móviles
+  */
+
+  let touchStartX = 0;
+
+
+  section.addEventListener(
+    'touchstart',
+    function (event) {
+
+      touchStartX =
+        event.changedTouches[0].screenX;
+
+      stopAutoplay();
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  section.addEventListener(
+    'touchend',
+    function (event) {
+
+      const touchEndX =
+        event.changedTouches[0].screenX;
+
+
+      const difference =
+        touchStartX - touchEndX;
+
+
+      if (
+        Math.abs(difference) > 50
+      ) {
+
+        if (difference > 0) {
+
+          showSlide(
+            current + 1
+          );
+
+        } else {
+
+          showSlide(
+            current - 1
+          );
+
+        }
+
+      }
+
+
+      startAutoplay();
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  showSlide(0);
+
+  startAutoplay();
+
+})();
+</script>
+</head>
+<body>
+</body>
+</html>
