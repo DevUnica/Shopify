@@ -1,14 +1,24 @@
 
-  /* ============================================================
-     MARCAS FAVORITAS — DISEÑO MODERNO
-     ============================================================ */
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  .marcas-favoritas {
-    width: 100%;
-    background: #ffffff;
-    padding: 65px 0 55px;
-    overflow: hidden;
-  }
+<link
+  href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"
+  rel="stylesheet"
+>
+
+<style>
+
+/* ============================================================
+   MARCAS FAVORITAS
+   ============================================================ */
+
+.marcas-favoritas {
+  width: 100%;
+  background: #ffffff;
+  padding: 65px 0 55px;
+  overflow: hidden;
+}
 
 .marcas-favoritas__container {
   width: 100%;
@@ -24,20 +34,25 @@
    ============================================================ */
 
 .marcas-favoritas__title {
-  margin: 0 0 48px;
+  margin: 0 0 45px;
+
   text-align: center;
+
+  font-family: 'Varela Round', sans-serif;
+
   font-size: 42px;
   line-height: 1.15;
+
   font-weight: 400;
+
   letter-spacing: -1.2px;
+
   color: #181818;
-  font-family: 'Varela Round', sans-serif;
 }
 
 .marcas-favoritas__title .orange {
   color: #7fb32c;
 }
-
 
 
 /* ============================================================
@@ -47,66 +62,77 @@
 .marcas-favoritas__slider {
   position: relative;
   width: 100%;
+
   overflow: hidden;
+
+  padding: 10px 0;
 }
+
 
 .marcas-favoritas__track {
   display: flex;
+
   width: 100%;
 
   transition:
     transform 0.65s cubic-bezier(.22, .61, .36, 1);
+
+  will-change: transform;
 }
 
 
 /* ============================================================
-   SLIDE
+   CADA SLIDE
    ============================================================ */
 
 .marcas-favoritas__slide {
   flex: 0 0 100%;
+
   width: 100%;
 
   display: grid;
 
   /*
+     DESKTOP
      6 columnas x 2 filas
+     = 12 marcas
   */
 
   grid-template-columns:
     repeat(6, minmax(0, 1fr));
 
   grid-template-rows:
-    repeat(2, 140px);
+    repeat(2, 120px);
 
   gap: 22px;
 
-  padding: 10px 45px;
+  padding:
+    10px 45px;
 
   box-sizing: border-box;
 }
 
 
 /* ============================================================
-   ESPACIO DE CADA MARCA
+   TARJETA DE MARCA
    ============================================================ */
 
 .marca-logo {
+  position: relative;
 
   width: 100%;
-  height: 80px;
+  height: 100%;
+
+  min-height: 100px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  padding: 10px;
+  padding: 12px;
 
   box-sizing: border-box;
-
-  /*
-     Diseño tipo tarjeta premium
-  */
 
   background: #ffffff;
 
@@ -114,74 +140,80 @@
 
   border-radius: 14px;
 
+  overflow: hidden;
+
+  transform:
+    translateY(0)
+    scale(1);
+
   box-shadow:
     0 3px 12px rgba(0, 0, 0, 0.035);
 
   transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease,
-    background 0.3s ease;
-
+    transform 0.35s cubic-bezier(.22, .61, .36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
 }
 
 
+
 /* ============================================================
-   HOVER CARD
+   HOVER
    ============================================================ */
 
 .marca-logo:hover {
 
-  transform: translateY(-6px);
+  transform:
+    translateY(-6px)
+    scale(1.02);
 
-  border-color: rgba(237, 114, 3, 0.18);
+  border-color:
+    rgba(127, 179, 44, 0.40);
 
-  background: #fffdfb;
+  background:
+    #ffffff;
 
   box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.09);
+    0 14px 30px rgba(0, 0, 0, 0.09),
+    0 5px 15px rgba(127, 179, 44, 0.10);
+}
 
+
+.marca-logo:hover::before {
+  width: 55%;
 }
 
 
 /* ============================================================
-   LOGOS
+   LOGO
    ============================================================ */
 
 .marca-logo img {
 
   display: block;
 
-  /*
-     AQUÍ AUMENTAMOS EL TAMAÑO
-  */
-
   width: 100%;
   height: 100%;
 
-  max-width: 188px;
-  max-height: 100px;
+  max-width: 190px;
+  max-height: 82px;
 
   object-fit: contain;
   object-position: center;
 
-  /*
-     Evita deformación
-  */
+  transform:
+    scale(1);
 
   transition:
-    transform 0.3s ease;
+    transform 0.4s cubic-bezier(.22, .61, .36, 1);
 }
 
 
-/* ============================================================
-   HOVER LOGO
-   ============================================================ */
-
 .marca-logo:hover img {
 
-  transform: scale(1.08);
-
+  transform:
+    scale(1.08);
 }
 
 
@@ -195,27 +227,32 @@
 
   top: 50%;
 
-  transform: translateY(-50%);
+  transform:
+    translateY(-50%);
 
-  width: 52px;
-  height: 52px;
+  width: 50px;
+  height: 50px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   padding: 0;
 
-  border: 1px solid #eeeeee;
+  border:
+    1px solid #eeeeee;
 
   border-radius: 50%;
 
-  background: rgba(255,255,255,0.98);
+  background:
+    rgba(255, 255, 255, 0.98);
 
-  color: #7fb32c;
+  color:
+    #7fb32c;
 
   box-shadow:
-    0 5px 18px rgba(0,0,0,0.10);
+    0 5px 18px rgba(0, 0, 0, 0.10);
 
   cursor: pointer;
 
@@ -224,7 +261,8 @@
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
-    background 0.25s ease;
+    background 0.25s ease,
+    border-color 0.25s ease;
 }
 
 
@@ -234,11 +272,14 @@
     translateY(-50%)
     scale(1.10);
 
-  background: #fff8f3;
+  background:
+    #ffffff;
+
+  border-color:
+    rgba(127, 179, 44, 0.35);
 
   box-shadow:
-    0 8px 25px rgba(237,114,3,0.18);
-
+    0 8px 25px rgba(127, 179, 44, 0.18);
 }
 
 
@@ -251,21 +292,16 @@
   line-height: 1;
 
   margin-top: -3px;
-
 }
 
 
 .marcas-favoritas__arrow--prev {
-
   left: 0;
-
 }
 
 
 .marcas-favoritas__arrow--next {
-
   right: 0;
-
 }
 
 
@@ -282,8 +318,7 @@
 
   gap: 7px;
 
-  margin-top: 30px;
-
+  margin-top: 25px;
 }
 
 
@@ -298,14 +333,14 @@
 
   border-radius: 20px;
 
-  background: #d7d7d7;
+  background:
+    #d7d7d7;
 
   cursor: pointer;
 
   transition:
     width 0.3s ease,
     background 0.3s ease;
-
 }
 
 
@@ -313,13 +348,15 @@
 
   width: 28px;
 
-  background: #7fb32c;
-
+  background:
+    #7fb32c;
 }
 
 
 /* ============================================================
    TABLET
+   8 MARCAS POR PÁGINA
+   4 COLUMNAS x 2 FILAS
    ============================================================ */
 
 @media screen and (max-width: 1000px) {
@@ -328,7 +365,6 @@
 
     padding:
       50px 0 40px;
-
   }
 
 
@@ -336,16 +372,16 @@
 
     padding:
       0 55px;
-
   }
 
 
   .marcas-favoritas__title {
 
-    font-size: 34px;
+    font-size:
+      34px;
 
-    margin-bottom: 38px;
-
+    margin-bottom:
+      35px;
   }
 
 
@@ -355,31 +391,33 @@
       repeat(4, minmax(0, 1fr));
 
     grid-template-rows:
-      repeat(2, 124px);
+      repeat(2, 115px);
 
-    gap: 18px;
+    gap:
+      18px;
 
     padding:
       10px 25px;
-
   }
 
 
   .marca-logo {
 
-    height: 124px;
+    min-height:
+      105px;
 
-    padding: 12px;
-
+    padding:
+      12px;
   }
 
 
   .marca-logo img {
 
-    max-width: 148px;
+    max-width:
+      150px;
 
-    max-height: 84px;
-
+    max-height:
+      75px;
   }
 
 }
@@ -387,6 +425,8 @@
 
 /* ============================================================
    MÓVIL
+   4 MARCAS POR PÁGINA
+   2 COLUMNAS x 2 FILAS
    ============================================================ */
 
 @media screen and (max-width: 600px) {
@@ -395,7 +435,6 @@
 
     padding:
       38px 0 30px;
-
   }
 
 
@@ -403,28 +442,26 @@
 
     padding:
       0 38px;
-
   }
 
 
   .marcas-favoritas__title {
 
-    font-size: 25px;
+    font-size:
+      25px;
 
-    letter-spacing: -0.5px;
+    letter-spacing:
+      -0.5px;
 
-    margin-bottom: 28px;
-
+    margin-bottom:
+      25px;
   }
 
 
-  .marcas-favoritas__star {
+  .marcas-favoritas__slider {
 
-    font-size: 18px;
-
-    margin:
-      0 4px;
-
+    padding:
+      7px 0;
   }
 
 
@@ -434,41 +471,48 @@
       repeat(2, minmax(0, 1fr));
 
     grid-template-rows:
-      repeat(3, 96px);
+      repeat(2, 100px);
 
-    gap: 13px;
+    gap:
+      13px;
 
     padding:
-      5px;
-
+      6px;
   }
 
 
   .marca-logo {
 
-    height: 96px;
+    min-height:
+      90px;
 
-    padding: 8px;
+    padding:
+      8px;
 
-    border-radius: 11px;
-
+    border-radius:
+      11px;
   }
 
 
   .marca-logo img {
 
-    max-width: 108px;
+    max-width:
+      110px;
 
-    max-height: 60px;
-
+    max-height:
+      62px;
   }
 
 
   .marca-logo:hover {
 
     transform:
-      translateY(-3px);
+      translateY(-3px)
+      scale(1.015);
 
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.08),
+      0 4px 12px rgba(127, 179, 44, 0.10);
   }
 
 
@@ -476,66 +520,162 @@
 
     transform:
       scale(1.05);
-
   }
 
 
+  .marca-logo:hover::before {
+
+    width:
+      45%;
+  }
+
+
+  /* ========================================================
+     FLECHAS MÓVIL
+     ======================================================== */
+
   .marcas-favoritas__arrow {
 
-    width: 36px;
+    width:
+      34px;
 
-    height: 42px;
+    height:
+      40px;
 
-    border-radius: 8px;
-
+    border-radius:
+      8px;
   }
 
 
   .marcas-favoritas__arrow span {
 
-    font-size: 28px;
-
+    font-size:
+      27px;
   }
 
 
   .marcas-favoritas__arrow--prev {
 
-    left: 0;
-
+    left:
+      0;
   }
 
 
   .marcas-favoritas__arrow--next {
 
-    right: 0;
-
+    right:
+      0;
   }
 
 
+  /* ========================================================
+     DOTS MÓVIL
+     ======================================================== */
+
   .marcas-favoritas__dots {
 
-    margin-top: 22px;
-
+    margin-top:
+      20px;
   }
 
 
   .marcas-favoritas__dot {
 
-    width: 7px;
+    width:
+      7px;
 
-    height: 7px;
-
+    height:
+      7px;
   }
 
 
   .marcas-favoritas__dot.active {
 
-    width: 21px;
-
+    width:
+      21px;
   }
 
 }
-{% endstylesheet %}
+
+
+/* ============================================================
+   PANTALLAS MUY PEQUEÑAS
+   ============================================================ */
+
+@media screen and (max-width: 380px) {
+
+  .marcas-favoritas__container {
+
+    padding:
+      0 32px;
+  }
+
+
+  .marcas-favoritas__slide {
+
+    gap:
+      10px;
+  }
+
+
+  .marca-logo {
+
+    min-height:
+      84px;
+  }
+
+
+  .marca-logo img {
+
+    max-width:
+      95px;
+
+    max-height:
+      55px;
+  }
+
+}
+
+
+/* ============================================================
+   REDUCIR ANIMACIONES
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .marca-logo,
+  .marca-logo img,
+  .marca-logo::before,
+  .marcas-favoritas__arrow,
+  .marcas-favoritas__dot,
+  .marcas-favoritas__track {
+
+    transition:
+      none !important;
+  }
+
+
+  .marca-logo:hover {
+
+    transform:
+      none;
+  }
+
+
+  .marca-logo:hover img {
+
+    transform:
+      scale(1.03);
+  }
+
+}
+
+</style>
+
+
+<!-- ============================================================
+     SECCIÓN
+     ============================================================ -->
 
 <section
   class="marcas-favoritas"
@@ -545,241 +685,216 @@
   <div class="marcas-favoritas__container">
 
 
-    <!-- ======================================================
+    <!-- ========================================================
          TÍTULO
-         ====================================================== -->
+         ======================================================== -->
 
     <h2 class="marcas-favoritas__title">
 
-
       Tus marcas
+
       <span class="orange">
         favoritas
       </span>
 
-
     </h2>
 
 
-    <!-- ======================================================
+    <!-- ========================================================
          CARRUSEL
-         ====================================================== -->
+         ======================================================== -->
 
     <div class="marcas-favoritas__slider">
-
 
       <div class="marcas-favoritas__track">
 
 
-        <!-- ==================================================
-             SLIDE 1
-             ================================================== -->
+        <!-- ====================================================
+             LAS 24 MARCAS
+             ==================================================== -->
 
         <div class="marcas-favoritas__slide">
 
-
           <div class="marca-logo">
             <img
-              src="SVG/norma (1).webp"
-              alt="Marca 1"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/1Norma.webp"
+              alt="Norma"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/scribe.webp"
-              alt="Marca 2"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/2Scribe.webp"
+              alt="Scribe"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 6.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/3primavera.webp"
               alt="Marca 3"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 7.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/4totto.webp"
               alt="Marca 4"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 8.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/5kiut.webp"
               alt="Marca 5"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 9.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/6incolors.webp"
               alt="Marca 6"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 10.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/7xtrem.webp"
               alt="Marca 7"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 11.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/8fabercastell.webp"
               alt="Marca 8"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 12.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/9sharpie.webp"
               alt="Marca 9"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 13.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/10papermate.webp"
               alt="Marca 10"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 14.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/11%20prismacolor.webp"
               alt="Marca 11"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 15.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/12crayola.webp"
               alt="Marca 12"
               loading="lazy"
             >
           </div>
 
-
         </div>
 
 
-        <!-- ==================================================
+        <!-- ====================================================
              SLIDE 2
-             ================================================== -->
+             ==================================================== -->
 
         <div class="marcas-favoritas__slide">
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 16.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/13edding.webp"
               alt="Marca 13"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 17.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/14tesa.webp"
               alt="Marca 14"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 18.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/15pegastic.webp"
               alt="Marca 15"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 19.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/16maped.webp"
               alt="Marca 16"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 20.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/17ahroyal.webp"
               alt="Marca 17"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 21.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/18kores.webp"
               alt="Marca 18"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 22.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/19milan.webp"
               alt="Marca 19"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 23.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/20jansport.webp"
               alt="Marca 20"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 24.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/21pelikan.webp"
               alt="Marca 21"
               loading="lazy"
             >
           </div>
 
-
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 25.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/22colibri.webp"
               alt="Marca 22"
               loading="lazy"
             >
@@ -787,7 +902,7 @@
 
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 26.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/23sosoriginal.webp"
               alt="Marca 23"
               loading="lazy"
             >
@@ -795,77 +910,56 @@
 
           <div class="marca-logo">
             <img
-              src="SVG/icoArtboard 27.svg"
+              src="https://raw.githubusercontent.com/DevUnica/Shopify/main/SVG/24icopel.webp"
               alt="Marca 24"
               loading="lazy"
             >
           </div>
 
-
-
         </div>
-
-        
 
 
       </div>
 
 
-      <!-- ====================================================
+      <!-- ======================================================
            FLECHA IZQUIERDA
-           ==================================================== -->
+           ====================================================== -->
 
       <button
         class="marcas-favoritas__arrow marcas-favoritas__arrow--prev"
         type="button"
         aria-label="Marcas anteriores"
       >
-
         <span>‹</span>
-
       </button>
 
 
-      <!-- ====================================================
+      <!-- ======================================================
            FLECHA DERECHA
-           ==================================================== -->
+           ====================================================== -->
 
       <button
         class="marcas-favoritas__arrow marcas-favoritas__arrow--next"
         type="button"
         aria-label="Más marcas"
       >
-
         <span>›</span>
-
       </button>
 
 
     </div>
 
 
-    <!-- ======================================================
-         PUNTOS
-         ====================================================== -->
+    <!-- ========================================================
+         INDICADORES
+         ======================================================== -->
 
-    <div class="marcas-favoritas__dots">
+    <div
+      class="marcas-favoritas__dots"
+      aria-label="Navegación de marcas"
+    ></div>
 
-
-      <button
-        class="marcas-favoritas__dot active"
-        type="button"
-        aria-label="Página 1"
-      ></button>
-
-
-      <button
-        class="marcas-favoritas__dot"
-        type="button"
-        aria-label="Página 2"
-      ></button>
-
-
-    </div>
 
   </div>
 
@@ -873,7 +967,12 @@
 
 
 <script>
+
 (function () {
+
+  /* ==========================================================
+     SECCIÓN
+     ========================================================== */
 
   const section =
     document.getElementById(
@@ -883,21 +982,27 @@
   if (!section) return;
 
 
+  /* ==========================================================
+     ELEMENTOS
+     ========================================================== */
+
   const track =
     section.querySelector(
       '.marcas-favoritas__track'
     );
 
 
-  const slides =
-    section.querySelectorAll(
-      '.marcas-favoritas__slide'
+  const allLogos =
+    Array.from(
+      section.querySelectorAll(
+        '.marca-logo'
+      )
     );
 
 
-  const dots =
-    section.querySelectorAll(
-      '.marcas-favoritas__dot'
+  const dotsContainer =
+    section.querySelector(
+      '.marcas-favoritas__dots'
     );
 
 
@@ -913,12 +1018,200 @@
     );
 
 
+  let slides = [];
+
   let current = 0;
 
   let autoplay = null;
 
+  let resizeTimer = null;
+
+
+  /* ==========================================================
+     DETERMINAR CUÁNTAS MARCAS VAN POR SLIDE
+     ========================================================== */
+
+  function getItemsPerSlide() {
+
+    const width =
+      window.innerWidth;
+
+
+    /*
+       DESKTOP
+       12 marcas
+    */
+
+    if (width > 1000) {
+      return 12;
+    }
+
+
+    /*
+       TABLET
+       8 marcas
+    */
+
+    if (width > 600) {
+      return 8;
+    }
+
+
+    /*
+       MÓVIL
+       4 marcas
+    */
+
+    return 4;
+  }
+
+
+  /* ==========================================================
+     CREAR SLIDES
+     ========================================================== */
+
+  function buildSlides() {
+
+    const itemsPerSlide =
+      getItemsPerSlide();
+
+
+    /*
+       Guardar todas las marcas
+    */
+
+    const logos =
+      Array.from(allLogos);
+
+
+    /*
+       Limpiar track
+    */
+
+    track.innerHTML = "";
+
+
+    slides = [];
+
+
+    /*
+       Crear nuevos slides
+    */
+
+    for (
+      let i = 0;
+      i < logos.length;
+      i += itemsPerSlide
+    ) {
+
+      const slide =
+        document.createElement('div');
+
+
+      slide.className =
+        'marcas-favoritas__slide';
+
+
+      const group =
+        logos.slice(
+          i,
+          i + itemsPerSlide
+        );
+
+
+      group.forEach(
+        function (logo) {
+
+          slide.appendChild(
+            logo.cloneNode(true)
+          );
+
+        }
+      );
+
+
+      track.appendChild(
+        slide
+      );
+
+
+      slides.push(
+        slide
+      );
+
+    }
+
+
+    /*
+       Crear indicadores
+    */
+
+    dotsContainer.innerHTML = "";
+
+
+    slides.forEach(
+      function (_, index) {
+
+        const dot =
+          document.createElement(
+            'button'
+          );
+
+
+        dot.className =
+          'marcas-favoritas__dot';
+
+
+        dot.type =
+          'button';
+
+
+        dot.setAttribute(
+          'aria-label',
+          'Página ' +
+          (index + 1)
+        );
+
+
+        dot.addEventListener(
+          'click',
+          function () {
+
+            showSlide(index);
+
+            startAutoplay();
+
+          }
+        );
+
+
+        dotsContainer.appendChild(
+          dot
+        );
+
+      }
+    );
+
+
+    /*
+       Reiniciar posición
+    */
+
+    current = 0;
+
+    showSlide(0);
+
+  }
+
+
+  /* ==========================================================
+     MOSTRAR SLIDE
+     ========================================================== */
 
   function showSlide(index) {
+
+    if (!slides.length) return;
+
 
     if (index < 0) {
 
@@ -944,6 +1237,12 @@
       '%, 0, 0)';
 
 
+    const dots =
+      dotsContainer.querySelectorAll(
+        '.marcas-favoritas__dot'
+      );
+
+
     dots.forEach(
       function (dot, i) {
 
@@ -958,11 +1257,17 @@
   }
 
 
+  /* ==========================================================
+     AUTOPLAY
+     ========================================================== */
+
   function stopAutoplay() {
 
     if (autoplay) {
 
-      clearInterval(autoplay);
+      clearInterval(
+        autoplay
+      );
 
       autoplay = null;
 
@@ -974,6 +1279,17 @@
   function startAutoplay() {
 
     stopAutoplay();
+
+
+    /*
+       Si solo existe un slide,
+       no necesitamos autoplay.
+    */
+
+    if (slides.length <= 1) {
+      return;
+    }
+
 
     autoplay =
       setInterval(
@@ -990,63 +1306,45 @@
   }
 
 
-  if (prev) {
+  /* ==========================================================
+     BOTÓN ANTERIOR
+     ========================================================== */
 
-    prev.addEventListener(
-      'click',
-      function () {
+  prev.addEventListener(
+    'click',
+    function () {
 
-        showSlide(
-          current - 1
-        );
-
-        startAutoplay();
-
-      }
-    );
-
-  }
-
-
-  if (next) {
-
-    next.addEventListener(
-      'click',
-      function () {
-
-        showSlide(
-          current + 1
-        );
-
-        startAutoplay();
-
-      }
-    );
-
-  }
-
-
-  dots.forEach(
-    function (dot, index) {
-
-      dot.addEventListener(
-        'click',
-        function () {
-
-          showSlide(index);
-
-          startAutoplay();
-
-        }
+      showSlide(
+        current - 1
       );
+
+      startAutoplay();
 
     }
   );
 
 
-  /*
-     Pausar al pasar el mouse
-  */
+  /* ==========================================================
+     BOTÓN SIGUIENTE
+     ========================================================== */
+
+  next.addEventListener(
+    'click',
+    function () {
+
+      showSlide(
+        current + 1
+      );
+
+      startAutoplay();
+
+    }
+  );
+
+
+  /* ==========================================================
+     PAUSAR CON MOUSE
+     ========================================================== */
 
   section.addEventListener(
     'mouseenter',
@@ -1060,9 +1358,9 @@
   );
 
 
-  /*
-     Swipe para móviles
-  */
+  /* ==========================================================
+     SWIPE MÓVIL
+     ========================================================== */
 
   let touchStartX = 0;
 
@@ -1072,7 +1370,8 @@
     function (event) {
 
       touchStartX =
-        event.changedTouches[0].screenX;
+        event.changedTouches[0]
+          .screenX;
 
       stopAutoplay();
 
@@ -1088,11 +1387,13 @@
     function (event) {
 
       const touchEndX =
-        event.changedTouches[0].screenX;
+        event.changedTouches[0]
+          .screenX;
 
 
       const difference =
-        touchStartX - touchEndX;
+        touchStartX -
+        touchEndX;
 
 
       if (
@@ -1125,13 +1426,46 @@
   );
 
 
-  showSlide(0);
+  /* ==========================================================
+     RESPONSIVE
+     RECONSTRUIR AL CAMBIAR TAMAÑO
+     ========================================================== */
+
+  window.addEventListener(
+    'resize',
+    function () {
+
+      clearTimeout(
+        resizeTimer
+      );
+
+
+      resizeTimer =
+        setTimeout(
+          function () {
+
+            stopAutoplay();
+
+            buildSlides();
+
+            startAutoplay();
+
+          },
+          250
+        );
+
+    }
+  );
+
+
+  /* ==========================================================
+     INICIALIZAR
+     ========================================================== */
+
+  buildSlides();
 
   startAutoplay();
 
 })();
+
 </script>
-</head>
-<body>
-</body>
-</html>
