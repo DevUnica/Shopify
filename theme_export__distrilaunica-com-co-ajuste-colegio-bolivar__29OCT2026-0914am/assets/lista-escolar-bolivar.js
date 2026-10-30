@@ -57,7 +57,9 @@
       this.totalCountEl = this.querySelector('[data-lista-escolar-total-count]');
       this.modalEl = this.querySelector('[data-lista-escolar-modal]');
       this.modalTitleEl = this.querySelector('[data-lista-escolar-modal-title]');
-      this.openBtn = this.querySelector('[data-lista-escolar-open]');
+      this.openBtn =
+        document.querySelector('[data-lista-escolar-open-external]') ||
+        this.querySelector('[data-lista-escolar-open]');
       this.launcherMessageEl = this.querySelector('[data-lista-escolar-launcher-message]');
       this.triggerCountEl = this.querySelector('[data-lista-escolar-trigger-count]');
       this.triggerUnitsEl = this.querySelector('[data-lista-escolar-trigger-units]');
@@ -131,6 +133,17 @@
           if (event.key !== 'Escape' || !this.isModalOpen()) return;
           event.preventDefault();
           this.closeModal();
+        },
+        { signal }
+      );
+
+      document.addEventListener(
+        'click',
+        (event) => {
+          const target = event.target instanceof Element ? event.target : null;
+          if (!target?.closest('[data-lista-escolar-open-external]')) return;
+          event.preventDefault();
+          this.openModal();
         },
         { signal }
       );

@@ -156,13 +156,8 @@
   show_divider: section.settings.show_section_divider,
   divider_width: section.settings.divider_width
 %}
-<div class="lista-escolar section section--padding section-{{ section.id }} color-{{ section.settings.color_scheme }}">
+<div class="lista-escolar lista-escolar--modal-host section section--padding section-{{ section.id }} color-{{ section.settings.color_scheme }}">
   <div class="section__container page-width page-width--{{ section.settings.container }}">
-    {% render 'section-heading',
-      section_settings: section.settings,
-      spacing: 'large'
-    %}
-
     {%- if lista_items != blank -%}
       {%- if has_incomplete_entries -%}
         <div class="alert alert--warning blocks-radius" role="status">
@@ -177,30 +172,6 @@
         data-error-minimum="Debes mantener al menos un útil seleccionado en la lista."
         data-error-cart="No se pudo agregar la lista al carrito. Intenta de nuevo."
       >
-        <div class="lista-escolar__launcher">
-          <button
-            type="button"
-            class="btn btn--primary btn--large lista-escolar__open"
-            data-lista-escolar-open
-            aria-haspopup="dialog"
-            aria-controls="ListaEscolarModal-{{ section.id }}"
-          >
-            <span class="btn__text">{{ section.settings.trigger_label | default: 'Ver y personalizar lista' }}</span>
-          </button>
-
-          {%- if section.settings.show_trigger_summary -%}
-            <p class="lista-escolar__launcher-meta text-subtext">
-              <span><strong data-lista-escolar-trigger-count>{{ initial_count }}</strong> útiles</span>
-              <span aria-hidden="true">·</span>
-              <span><span data-lista-escolar-trigger-units>{{ initial_units }}</span> unidades</span>
-              <span aria-hidden="true">·</span>
-              <span>Total <strong data-lista-escolar-trigger-total>{{ initial_total | money }}</strong></span>
-            </p>
-          {%- endif -%}
-
-          <div class="lista-escolar__message alert" data-lista-escolar-launcher-message role="status" aria-live="polite" hidden></div>
-        </div>
-
         <dialog
           class="lista-escolar__modal"
           id="ListaEscolarModal-{{ section.id }}"
@@ -450,7 +421,7 @@
       "type": "text",
       "id": "trigger_label",
       "label": "Texto del botón que abre la lista",
-      "default": "Ver y personalizar lista"
+      "default": "Comprar Ahora"
     },
     {
       "type": "checkbox",
