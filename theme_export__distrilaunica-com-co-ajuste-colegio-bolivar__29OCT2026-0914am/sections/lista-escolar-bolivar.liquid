@@ -1,0 +1,533 @@
+{%- comment -%}
+  Configurador de listas escolares para Distribuidora La Única.
+  Aislamiento estricto: solo opera en productos asignados a la plantilla 'colegio-bolivar'.
+{%- endcomment -%}
+{%- if template.name == 'product' and template.suffix == 'colegio-bolivar' -%}
+
+{{ 'lista-escolar-bolivar.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'lista-escolar-bolivar.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign articulos_metafield = product.metafields.custom.articulos_de_la_lista_escolar_2
+  assign lista_grados_metafield = product.metafields.custom.lista_de_grados
+  assign article_entries = nil
+  assign product_items = nil
+  assign uses_article_metaobjects = false
+  if articulos_metafield.type == 'list.metaobject_reference' and articulos_metafield.value != blank
+    assign article_entries = articulos_metafield.value
+    assign uses_article_metaobjects = true
+  elsif lista_grados_metafield.type == 'list.product_reference'
+    assign product_items = lista_grados_metafield.value
+  endif
+  assign initial_total = 0
+  assign initial_count = 0
+  assign initial_units = 0
+  assign seen_variants = ','
+  assign has_incomplete_entries = false
+-%}
+
+{%- capture lista_items -%}
+  {%- if uses_article_metaobjects -%}
+    {%- for article_entry in article_entries limit: 250 -%}
+      {%- liquid
+        assign item_product = article_entry.producto.value
+        assign requested_quantity = article_entry.cantidad_requerida.value | plus: 0
+        assign requested_quantity_remainder = requested_quantity | modulo: 1
+      -%}
+      {%- if item_product != blank and item_product.title != blank and requested_quantity > 0 and requested_quantity_remainder == 0 -%}
+        {%- assign item_variant = item_product.selected_or_first_available_variant | default: item_product.variants.first -%}
+        {%- if item_variant -%}
+          {%- liquid
+            assign required_quantity_valid = true
+            assign required_min = 1
+            assign required_step = 1
+            if item_variant.quantity_rule
+              assign required_min = item_variant.quantity_rule.min | default: 1
+              assign required_step = item_variant.quantity_rule.increment | default: 1
+              assign required_step_difference = requested_quantity | minus: required_min
+              assign required_step_remainder = required_step_difference | modulo: required_step
+              if requested_quantity < required_min or required_step_remainder != 0
+                assign required_quantity_valid = false
+              endif
+              if item_variant.quantity_rule.max != nil and requested_quantity > item_variant.quantity_rule.max
+                assign required_quantity_valid = false
+              endif
+            endif
+          -%}
+
+          {%- if required_quantity_valid -%}
+            {%- capture item_quantity -%}
+              {%- render 'lista-escolar-quantity', variant: item_variant, quantity: requested_quantity -%}
+            {%- endcapture -%}
+            {%- assign item_quantity = item_quantity | plus: 0 -%}
+            {%- liquid
+              assign item_available = item_variant.available
+              if item_available and item_variant.inventory_management != blank and item_variant.inventory_policy == 'deny'
+                assign item_inventory = item_variant.inventory_quantity | default: 0
+                if item_inventory < 1
+                  assign item_available = false
+                endif
+                if item_variant.quantity_rule and item_variant.quantity_rule.min > item_inventory
+                  assign item_available = false
+                endif
+              endif
+
+              if item_available
+                assign initial_count = initial_count | plus: 1
+                assign initial_units = initial_units | plus: item_quantity
+                assign item_line_total = item_variant.price | times: item_quantity
+                assign initial_total = initial_total | plus: item_line_total
+              endif
+            -%}
+            {%- render 'lista-escolar-item',
+              item_product: item_product,
+              item_variant: item_variant,
+              item_quantity: item_quantity,
+              item_available: item_available,
+              index: forloop.index,
+              section_id: section.id,
+              show_image: section.settings.show_image,
+              show_sku: section.settings.show_sku
+            -%}
+          {%- else -%}
+            {%- assign has_incomplete_entries = true -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- assign has_incomplete_entries = true -%}
+        {%- endif -%}
+      {%- else -%}
+        {%- assign has_incomplete_entries = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- elsif product_items != blank -%}
+    {%- for item_product in product_items limit: 250 -%}
+      {%- if item_product != blank and item_product.title != blank -%}
+        {%- unless item_product.id == product.id -%}
+          {%- assign item_variant = item_product.selected_or_first_available_variant | default: item_product.variants.first -%}
+          {%- if item_variant -%}
+            {%- assign dedupe_key = ',' | append: item_variant.id | append: ',' -%}
+            {%- unless seen_variants contains dedupe_key -%}
+              {%- liquid
+                assign seen_variants = seen_variants | append: item_variant.id | append: ','
+                assign raw_quantity = item_variant.metafields.custom.cantidad_lista_escolar.value | default: item_product.metafields.custom.cantidad_lista_escolar.value | default: section.settings.default_quantity | default: 1
+              -%}
+              {%- capture item_quantity -%}
+                {%- render 'lista-escolar-quantity', variant: item_variant, quantity: raw_quantity -%}
+              {%- endcapture -%}
+              {%- assign item_quantity = item_quantity | plus: 0 -%}
+              {%- liquid
+                assign item_available = item_variant.available
+                if item_available and item_variant.inventory_management != blank and item_variant.inventory_policy == 'deny'
+                  assign item_inventory = item_variant.inventory_quantity | default: 0
+                  if item_inventory < 1
+                    assign item_available = false
+                  endif
+                  if item_variant.quantity_rule and item_variant.quantity_rule.min > item_inventory
+                    assign item_available = false
+                  endif
+                endif
+
+                if item_available
+                  assign initial_count = initial_count | plus: 1
+                  assign initial_units = initial_units | plus: item_quantity
+                  assign item_line_total = item_variant.price | times: item_quantity
+                  assign initial_total = initial_total | plus: item_line_total
+                endif
+              -%}
+              {%- render 'lista-escolar-item',
+                item_product: item_product,
+                item_variant: item_variant,
+                item_quantity: item_quantity,
+                item_available: item_available,
+                index: forloop.index,
+                section_id: section.id,
+                show_image: section.settings.show_image,
+                show_sku: section.settings.show_sku
+              -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{% render 'divider',
+  show_divider: section.settings.show_section_divider,
+  divider_width: section.settings.divider_width
+%}
+<div class="lista-escolar section section--padding section-{{ section.id }} color-{{ section.settings.color_scheme }}">
+  <div class="section__container page-width page-width--{{ section.settings.container }}">
+    {% render 'section-heading',
+      section_settings: section.settings,
+      spacing: 'large'
+    %}
+
+    {%- if lista_items != blank -%}
+      {%- if has_incomplete_entries -%}
+        <div class="alert alert--warning blocks-radius" role="status">
+          Algunos artículos no se mostraron porque su entrada del metaobjeto está incompleta. Verifica los campos «producto» y «cantidad_requerida».
+        </div>
+      {%- endif -%}
+      <lista-escolar-bolivar
+        class="lista-escolar__wrapper no-js-hidden"
+        data-cart-type="{{ settings.cart_type }}"
+        data-sold-out-label="{{ 'products.product.sold_out' | t | escape }}"
+        data-error-empty="Debes seleccionar al menos un útil disponible para agregar la lista al carrito."
+        data-error-minimum="Debes mantener al menos un útil seleccionado en la lista."
+        data-error-cart="No se pudo agregar la lista al carrito. Intenta de nuevo."
+      >
+        <div class="lista-escolar__launcher">
+          <button
+            type="button"
+            class="btn btn--primary btn--large lista-escolar__open"
+            data-lista-escolar-open
+            aria-haspopup="dialog"
+            aria-controls="ListaEscolarModal-{{ section.id }}"
+          >
+            <span class="btn__text">{{ section.settings.trigger_label | default: 'Ver y personalizar lista' }}</span>
+          </button>
+
+          {%- if section.settings.show_trigger_summary -%}
+            <p class="lista-escolar__launcher-meta text-subtext">
+              <span><strong data-lista-escolar-trigger-count>{{ initial_count }}</strong> útiles</span>
+              <span aria-hidden="true">·</span>
+              <span><span data-lista-escolar-trigger-units>{{ initial_units }}</span> unidades</span>
+              <span aria-hidden="true">·</span>
+              <span>Total <strong data-lista-escolar-trigger-total>{{ initial_total | money }}</strong></span>
+            </p>
+          {%- endif -%}
+
+          <div class="lista-escolar__message alert" data-lista-escolar-launcher-message role="status" aria-live="polite" hidden></div>
+        </div>
+
+        <dialog
+          class="lista-escolar__modal"
+          id="ListaEscolarModal-{{ section.id }}"
+          data-lista-escolar-modal
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="ListaEscolarModalTitle-{{ section.id }}"
+          aria-describedby="ListaEscolarModalSummary-{{ section.id }}"
+        >
+          <div class="lista-escolar__modal-panel" data-lista-escolar-panel>
+            <div class="lista-escolar__modal-head">
+              <h2
+                class="lista-escolar__modal-title"
+                id="ListaEscolarModalTitle-{{ section.id }}"
+                data-lista-escolar-modal-title
+                tabindex="-1"
+              >
+                {{- section.settings.modal_title | default: 'Personaliza tu lista escolar' -}}
+              </h2>
+              <button
+                type="button"
+                class="lista-escolar__modal-close"
+                data-lista-escolar-close
+                aria-label="Cerrar la lista"
+              >
+                {%- render 'icon-close' -%}
+              </button>
+            </div>
+
+            <div class="lista-escolar__toolbar">
+              <span class="lista-escolar__toolbar-count text-subtext">
+                <strong data-lista-escolar-selected-count>{{ initial_count }}</strong> de <span data-lista-escolar-total-count>{{ initial_count }}</span> útiles seleccionados
+              </span>
+              <button type="button" class="btn btn--plain lista-escolar__select-all" data-lista-escolar-select-all>
+                Seleccionar todos
+              </button>
+            </div>
+
+            <div class="lista-escolar__modal-body">
+              <ul class="lista-escolar__items" data-lista-escolar-items>
+                {{- lista_items -}}
+              </ul>
+            </div>
+
+            <div class="lista-escolar__modal-foot">
+              <div class="lista-escolar__summary-inner">
+                <div class="lista-escolar__summary-info">
+                  <h3 class="lista-escolar__summary-title" id="ListaEscolarModalSummary-{{ section.id }}">
+                    {{- section.settings.summary_title | default: 'Resumen de tu lista' -}}
+                  </h3>
+
+                  <p class="lista-escolar__summary-meta text-subtext">
+                    <span data-lista-escolar-count>{{ initial_count }}</span> útiles ·
+                    <span data-lista-escolar-units>{{ initial_units }}</span> unidades
+                  </p>
+
+                  <div class="lista-escolar__total-row">
+                    <span>Total</span>
+                    <span class="lista-escolar__total" data-lista-escolar-total>
+                      {{- initial_total | money -}}
+                    </span>
+                  </div>
+
+                  {%- if section.settings.show_tax_note -%}
+                    <small class="lista-escolar__tax text-subtext rte">
+                      {%- liquid
+                        if cart.taxes_included and shop.shipping_policy.body != blank
+                          echo 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url
+                        elsif cart.taxes_included
+                          echo 'sections.cart.taxes_included_but_shipping_at_checkout' | t
+                        elsif shop.shipping_policy.body != blank
+                          echo 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url
+                        else
+                          echo 'sections.cart.taxes_and_shipping_at_checkout' | t
+                        endif
+                      -%}
+                    </small>
+                  {%- endif -%}
+                </div>
+
+                <div class="lista-escolar__summary-actions">
+                  <button class="btn btn--primary w-full lista-escolar__submit" type="button" data-lista-escolar-submit {% if initial_count == 0 %}disabled{% endif %}>
+                    <span class="btn__text" data-lista-escolar-submit-label>
+                      {{- section.settings.button_label | default: 'Agregar lista al carrito' -}}
+                    </span>
+                    {% render 'loading-spinner' %}
+                  </button>
+
+                  <div class="lista-escolar__message alert" data-lista-escolar-message role="status" aria-live="polite" hidden></div>
+
+                  <button class="btn btn--link lista-escolar__restore" type="button" data-lista-escolar-restore hidden>
+                    Restablecer lista original
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      </lista-escolar-bolivar>
+
+      <noscript>
+        <div class="alert alert--warning blocks-radius">
+          Activa JavaScript en tu navegador para personalizar la lista y agregarla al carrito.
+        </div>
+      </noscript>
+    {%- else -%}
+      <div class="lista-escolar__empty">
+        <div class="lista-escolar__empty-card">
+          <div class="lista-escolar__empty-icon" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <h3 class="lista-escolar__empty-title h5">Esta lista todavía no tiene artículos válidos configurados</h3>
+          <p class="lista-escolar__empty-desc text-subtext">
+            Agrega entradas al metacampo <strong>custom.articulos_de_la_lista_escolar_2</strong> con un producto y una cantidad requerida. Si ya configuraste artículos, comprueba que las entradas estén activas y completas.
+          </p>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- endif -%}
+
+{%- schema -%}
+{
+  "name": "t:sections.lista-escolar-bolivar.name",
+  "limit": 1,
+  "class": "section-lista-escolar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Tu lista escolar"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "<p>Revisa los útiles de la lista, ajusta las cantidades y agrega todo al carrito.</p>"
+    },
+    {
+      "type": "select",
+      "id": "section_header_alignment",
+      "label": "Alineación del encabezado",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_header_alignment_mobile",
+      "label": "Alineación del encabezado en móvil",
+      "default": "left",
+      "options": [
+        { "value": "inherit", "label": "Igual que escritorio" },
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Útiles de la lista"
+    },
+    {
+      "type": "paragraph",
+      "content": "Los artículos se leen de custom.articulos_de_la_lista_escolar_2 (lista de metaobjetos articulo_de_lista_escolar, campos producto y cantidad_requerida). Si está vacío, se conserva como alternativa el metacampo antiguo custom.lista_de_grados."
+    },
+    {
+      "type": "range",
+      "id": "default_quantity",
+      "label": "Cantidad predeterminada",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Mostrar imagen",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Mostrar SKU",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Resumen y botón"
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Título del resumen",
+      "default": "Resumen de tu lista"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Agregar lista al carrito"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tax_note",
+      "label": "Mostrar nota de impuestos y envío",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Botón y ventana modal"
+    },
+    {
+      "type": "paragraph",
+      "content": "El listado completo se muestra dentro de una ventana modal. En la página solo se ve el botón que la abre."
+    },
+    {
+      "type": "text",
+      "id": "trigger_label",
+      "label": "Texto del botón que abre la lista",
+      "default": "Ver y personalizar lista"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trigger_summary",
+      "label": "Mostrar resumen junto al botón (útiles, unidades y total)",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Título de la ventana modal",
+      "default": "Personaliza tu lista escolar"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Contenedor",
+      "default": "fixed",
+      "options": [
+        { "value": "full", "label": "Ancho completo" },
+        { "value": "fixed", "label": "Contenedor fijo" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_divider",
+      "label": "Mostrar separador",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "divider_width",
+      "label": "Ancho del separador",
+      "default": "fixed",
+      "options": [
+        { "value": "fixed", "label": "Contenedor fijo" },
+        { "value": "full", "label": "Ancho completo" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lista escolar (Colegio Bolívar)"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{%- endschema -%}

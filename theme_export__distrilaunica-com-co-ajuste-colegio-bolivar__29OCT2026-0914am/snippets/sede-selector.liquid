@@ -1,0 +1,2322 @@
+{% comment %}
+
+  DISTRIBUIDORA LA ÚNICA
+
+  Selector de sede Centro / Sur — versión configurada para Centro
+
+  Estilo basado en las secciones de la tienda (tarjetas de categorías)
+
+  Instalar este mismo snippet en:
+
+  - https://distrilaunica.com.co/
+
+  - https://sur.distrilaunica.com.co/
+
+  TIPOGRAFÍAS (manual de marca):
+
+  - Título del modal: Lapsus Pro Bold
+
+  - Sedes y textos:   Arial Rounded MT Bold
+
+  Para que Lapsus Pro Bold se vea, sube el archivo de la fuente
+
+  (LapsusPro-Bold.woff2) a Assets del tema, en ambas tiendas.
+
+  Si el archivo no existe, se usa Arial Rounded MT Bold / Arial
+
+  como respaldo y todo sigue funcionando.
+
+  COLORES (manual de marca):
+
+  - Sede Sur:    tarjeta verde #7fb32c
+
+  - Sede Centro: tarjeta amarilla #f7d52c
+
+  - Útiles (lápices, regla y arco): blanco, con detalles en un tono más oscuro
+
+    de la tarjeta (--dlu-tone)
+
+  - Botón y franja del modal: azul oscuro #1b3c73 / azul #1881c1
+
+  ÚTILES:
+
+  Están dibujados en SVG dentro de cada tarjeta (busca "Útiles escolares"
+
+  en el HTML), así que no hace falta subir ninguna imagen.
+
+  ANIMACIONES:
+
+  - Entrada: las tarjetas y los arcos aparecen con rebote.
+
+  - Hover / foco / toque: el avioncito vuela por toda la tarjeta (con rizo),
+
+    las letras del nombre saltan una a una, los lápices y la regla suben y el botón brilla.
+
+  - Al elegir una sede: confeti blanco y azul desde el botón.
+
+  Todo se desactiva con "reducir movimiento" del sistema.
+
+  IMPORTANTE: en la constante FALLBACK_STORE (más abajo) se define la sede
+
+  que se marca como "Estás aquí" cuando el dominio no es ninguno de los
+
+  dos oficiales (por ejemplo, el editor de temas o la vista previa de Shopify).
+
+    - En la tienda SUR    -> 'sur'
+
+    - En la tienda CENTRO -> 'centro'
+
+  Desarrollado por Interacstudio
+
+{% endcomment %}
+
+<style>
+
+  /* =========================================================
+
+     FUENTES DE MARCA
+
+     ========================================================= */
+
+  @font-face {
+
+    font-family: 'Lapsus Pro';
+
+    font-weight: 700;
+
+    font-style: normal;
+
+    font-display: swap;
+
+  }
+
+  /* =========================================================
+
+     SELECTOR DE SEDE
+
+     ========================================================= */
+
+  #dlu-store-selector {
+
+    /* Paleta del manual de marca */
+
+    --dlu-yellow: #f7d52c;
+
+    --dlu-pink: #df408a;
+
+    --dlu-magenta: #bd0d65;
+
+    --dlu-blue: #1881c1;
+
+    --dlu-navy: #df408a;
+
+    --dlu-orange: #f7a82c;
+
+    --dlu-green: #7fb32c;
+
+    --dlu-ink: #1f1d1f;
+
+    --dlu-background: #ffffff;
+
+    --dlu-muted: #5f5c66;
+
+    --dlu-overlay: rgba(113, 122, 138, 0.62);
+
+    --dlu-font-display: 'Lapsus Pro', 'Arial Rounded MT Bold', 'Arial Rounded MT', Arial, sans-serif;
+
+    --dlu-font-text: 'Arial Rounded MT Bold', 'Arial Rounded MT', Arial, sans-serif;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 999999999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 24px;
+
+    background: var(--dlu-overlay);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+
+      opacity 0.25s ease,
+
+      visibility 0.25s ease;
+
+    box-sizing: border-box;
+
+    overflow-y: auto;
+
+    font-family: var(--dlu-font-text);
+
+  }
+
+  #dlu-store-selector *,
+
+  #dlu-store-selector *::before,
+
+  #dlu-store-selector *::after {
+
+    box-sizing: border-box;
+
+  }
+
+  #dlu-store-selector.is-visible {
+
+    display: flex;
+
+    opacity: 1;
+
+    visibility: visible;
+
+  }
+
+  .dlu-selector__dialog {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 700px;
+
+    padding: 50px 36px 36px;
+
+    overflow: hidden;
+
+    background: var(--dlu-background);
+
+    color: var(--dlu-ink);
+
+    border-radius: 28px;
+
+    box-shadow:
+
+      0 10px 30px rgba(0, 0, 0, 0.10),
+
+      0 30px 80px rgba(0, 0, 0, 0.20);
+
+    transform: translateY(20px) scale(0.97);
+
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  }
+
+  #dlu-store-selector.is-visible .dlu-selector__dialog {
+
+    transform: translateY(0) scale(1);
+
+  }
+
+  /* Franja superior en azul de marca */
+
+  .dlu-selector__dialog::before {
+
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 6px;
+
+    background: var(--dlu-blue);
+
+  }
+
+  /* ================================
+
+     HEADER
+
+     ================================ */
+
+  .dlu-selector__header {
+
+    max-width: 500px;
+
+    margin: 0 auto 30px;
+
+    text-align: center;
+
+  }
+
+  .dlu-selector__title {
+
+    margin: 0 0 10px;
+
+    font-family: var(--dlu-font-display);
+
+    font-size: 36px;
+
+    font-weight: 700;
+
+    line-height: 1.1;
+
+    letter-spacing: 0;
+
+    color: var(--dlu-blue);
+
+  }
+
+  .dlu-selector__description {
+
+    margin: 0;
+
+    font-family: var(--dlu-font-text);
+
+    font-size: 15px;
+
+    font-weight: 400;
+
+    line-height: 1.55;
+
+    color: var(--dlu-muted);
+
+  }
+
+  /* ================================
+
+     SEDES
+
+     (tarjetas planas, como las categorías de la tienda)
+
+     ================================ */
+
+  .dlu-selector__stores {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+  }
+
+  .dlu-selector__store {
+
+    --dlu-card: var(--dlu-green);
+
+    --dlu-arch: rgba(255, 255, 255, 0.30);
+
+    --dlu-tone: #3f6b0c;
+
+    --dlu-button: var(--dlu-navy);
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    min-height: 230px;
+
+    padding: 26px 26px 24px;
+
+    overflow: hidden;
+
+    isolation: isolate;
+
+    text-decoration: none;
+
+    font-family: var(--dlu-font-text);
+
+    font-weight: 700;
+
+    color: var(--dlu-ink);
+
+    background: var(--dlu-card);
+
+    border-radius: 24px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+
+    cursor: pointer;
+
+    transition:
+
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+
+      box-shadow 0.25s ease;
+
+  }
+
+  /* Sede Sur: tarjeta verde, útiles en blanco, botón azul oscuro */
+
+  .dlu-selector__store[data-store="sur"] {
+
+    --dlu-card: var(--dlu-green);
+
+    --dlu-arch: rgba(255, 255, 255, 0.30);
+
+    --dlu-tone: #3f6b0c;
+
+    --dlu-button: var(--dlu-navy);
+
+  }
+
+  /* Sede Centro: tarjeta amarilla, útiles en blanco, botón azul oscuro */
+
+  .dlu-selector__store[data-store="centro"] {
+
+    --dlu-card: var(--dlu-yellow);
+
+    --dlu-arch: rgba(255, 255, 255, 0.50);
+
+    --dlu-tone: #9a6b00;
+
+    --dlu-button: var(--dlu-navy);
+
+  }
+
+  .dlu-selector__store:hover,
+
+  .dlu-selector__store:focus-visible {
+
+    transform: translateY(-5px);
+
+    box-shadow: 0 20px 36px rgba(0, 0, 0, 0.20);
+
+  }
+
+  .dlu-selector__store:focus-visible {
+
+    outline: 3px solid var(--dlu-navy);
+
+    outline-offset: 3px;
+
+  }
+
+  /* Al elegir: la tarjeta se "aprieta" mientras sale el confeti */
+
+  .dlu-selector__store.is-selected {
+
+    transform: scale(0.97);
+
+  }
+
+  /* ================================
+
+     ÚTILES ESCOLARES (lápices y regla dentro de un arco, como las categorías)
+
+     ================================ */
+
+  .dlu-selector__shape {
+
+    position: absolute;
+
+    z-index: -1;
+
+    pointer-events: none;
+
+  }
+
+    /* Útiles escolares: ilustración limpia con acentos de la marca */
+
+  .dlu-selector__shape--supplies {
+
+    right: 3%;
+
+    bottom: 0;
+
+    width: 38%;
+
+    height: auto;
+
+    overflow: visible;
+
+  }
+
+  .dlu-selector__supply {
+
+    transform-box: fill-box;
+
+    transform-origin: center bottom;
+
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--k, 0) * 70ms);
+
+  }
+
+  .dlu-selector__arch-shape { fill: var(--dlu-arch); }
+
+  .dlu-selector__s-white { fill: #ffffff; }
+
+  .dlu-selector__s-wood { fill: #f6d9a8; }
+
+  .dlu-selector__s-tone { fill: var(--dlu-tone); }
+
+  .dlu-selector__s-ridge { fill: var(--dlu-tone); opacity: 0.18; }
+
+  .dlu-selector__s-blue { fill: #1881c1; }
+
+  .dlu-selector__s-blue-soft { fill: #bfe5f8; }
+
+  .dlu-selector__s-pink { fill: #df408a; }
+
+  .dlu-selector__s-pink-soft { fill: #ffd1e5; }
+
+  .dlu-selector__s-orange { fill: #f7a82c; }
+
+  .dlu-selector__s-metal { fill: #d8e0e7; }
+
+  .dlu-selector__s-outline {
+
+    stroke: var(--dlu-tone);
+
+    stroke-width: 1.35;
+
+    stroke-linejoin: round;
+
+  }
+
+  .dlu-selector__s-ticks {
+
+    fill: none;
+
+    stroke: var(--dlu-tone);
+
+    stroke-width: 1.45;
+
+    stroke-linecap: round;
+
+    opacity: 0.85;
+
+  }
+
+  /* Las piezas se elevan en secuencia para dar profundidad al conjunto */
+
+  .dlu-selector__store:hover .dlu-selector__pencil,
+
+  .dlu-selector__store:focus-visible .dlu-selector__pencil { transform: translateY(-13px); }
+
+  .dlu-selector__store:hover .dlu-selector__ruler,
+
+  .dlu-selector__store:focus-visible .dlu-selector__ruler { transform: translateY(-9px); }
+
+  .dlu-selector__store:hover .dlu-selector__eraser,
+
+  .dlu-selector__store:focus-visible .dlu-selector__eraser { transform: translateY(-7px) rotate(-5deg); }
+
+  .dlu-selector__store:hover .dlu-selector__arch,
+
+  .dlu-selector__store:focus-visible .dlu-selector__arch { transform: translateY(-5px); }
+
+  /* ================================
+
+     DECORACIÓN: ruta punteada y avioncito de papel
+
+     Capa de fondo: líneas punteadas.
+
+     Capa superior: avioncito.
+
+     ================================ */
+
+  .dlu-selector__deco {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    pointer-events: none;
+
+  }
+
+  .dlu-selector__deco--back {
+
+    z-index: -1;
+
+  }
+
+  .dlu-selector__deco--front {
+
+    z-index: 3;
+
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.18));
+
+    animation: dlu-bob 3s ease-in-out infinite alternate;
+
+  }
+
+  .dlu-selector__deco-path {
+
+    fill: none;
+
+    stroke: rgba(255, 255, 255, 0.9);
+
+    stroke-width: 2.5;
+
+    stroke-linecap: round;
+
+    stroke-dasharray: 2 9;
+
+  }
+
+  @keyframes dlu-bob {
+
+    from { transform: translateY(0); }
+
+    to   { transform: translateY(-4px); }
+
+  }
+
+  /* ================================
+
+     CONTENIDO DE LA SEDE
+
+     ================================ */
+
+  .dlu-selector__store-eyebrow {
+
+    display: block;
+
+    margin: 0 0 6px;
+
+    font-family: var(--dlu-font-text);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.16em;
+
+    text-transform: uppercase;
+
+    color: var(--dlu-ink);
+
+    opacity: 0.8;
+
+  }
+
+  .dlu-selector__store-name {
+
+    position: relative;
+
+    margin: 0;
+
+    font-family: var(--dlu-font-text);
+
+    font-size: 50px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    letter-spacing: 0.01em;
+
+    text-transform: uppercase;
+
+    color: var(--dlu-ink);
+
+  }
+
+  /* Letras que saltan una a una al hacer hover */
+
+  .dlu-selector__letter {
+
+    display: inline-block;
+
+  }
+
+  .dlu-selector__store:hover .dlu-selector__letter,
+
+  .dlu-selector__store:focus-visible .dlu-selector__letter {
+
+    animation: dlu-hop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 70ms) both;
+
+  }
+
+  @keyframes dlu-hop {
+
+    0%   { transform: translateY(0) rotate(0); }
+
+    35%  { transform: translateY(-13px) rotate(-6deg); }
+
+    70%  { transform: translateY(2px) rotate(3deg); }
+
+    100% { transform: translateY(0) rotate(0); }
+
+  }
+
+  /* Texto solo para lectores de pantalla (el nombre completo) */
+
+  .dlu-selector__sr {
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 1px;
+
+    margin: -1px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    white-space: nowrap;
+
+    border: 0;
+
+  }
+
+  /* Botón: píldora de color con brillo y rebote al hacer hover */
+
+  .dlu-selector__store-action {
+
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    align-self: flex-start;
+
+    gap: 10px;
+
+    margin-top: 26px;
+
+    padding: 13px 18px 13px 20px;
+
+    overflow: hidden;
+
+    font-family: var(--dlu-font-text);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    letter-spacing: 0.04em;
+
+    text-transform: uppercase;
+
+    color: #ffffff;
+
+    background: var(--dlu-button);
+
+    border-radius: 100px;
+
+    transition:
+
+      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+
+      box-shadow 0.25s ease;
+
+  }
+
+  /* Brillo que cruza el botón */
+
+  .dlu-selector__store-action::after {
+
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 36%;
+
+    height: 100%;
+
+    background: linear-gradient(
+
+      100deg,
+
+      rgba(255, 255, 255, 0),
+
+      rgba(255, 255, 255, 0.4),
+
+      rgba(255, 255, 255, 0)
+
+    );
+
+    transform: translateX(-130%) skewX(-20deg);
+
+    pointer-events: none;
+
+  }
+
+  .dlu-selector__store:hover .dlu-selector__store-action,
+
+  .dlu-selector__store:focus-visible .dlu-selector__store-action {
+
+    transform: scale(1.07) translateX(3px);
+
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+
+  }
+
+  .dlu-selector__store.is-selected .dlu-selector__store-action {
+
+    transform: scale(1.12);
+
+  }
+
+  .dlu-selector__store:hover .dlu-selector__store-action::after,
+
+  .dlu-selector__store:focus-visible .dlu-selector__store-action::after {
+
+    animation: dlu-shine 0.9s ease 0.15s 1 both;
+
+  }
+
+  @keyframes dlu-shine {
+
+    from { transform: translateX(-130%) skewX(-20deg); }
+
+    to   { transform: translateX(480%) skewX(-20deg); }
+
+  }
+
+  .dlu-selector__store-action svg {
+
+    flex: 0 0 auto;
+
+    width: 17px;
+
+    height: 17px;
+
+  }
+
+  .dlu-selector__store:hover .dlu-selector__store-action svg,
+
+  .dlu-selector__store:focus-visible .dlu-selector__store-action svg {
+
+    animation: dlu-arrow 0.7s ease 0.1s 2;
+
+  }
+
+  @keyframes dlu-arrow {
+
+    0%, 100% { transform: translateX(0); }
+
+    50%      { transform: translateX(5px); }
+
+  }
+
+  /* "Estás aquí": etiqueta blanca en la esquina superior derecha */
+
+  .dlu-selector__current-badge {
+
+    position: absolute;
+
+    top: 16px;
+
+    right: 16px;
+
+    z-index: 2;
+
+    display: none;
+
+    align-items: center;
+
+    padding: 7px 12px;
+
+    font-family: var(--dlu-font-text);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    color: var(--dlu-ink);
+
+    background: #ffffff;
+
+    border-radius: 100px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+  }
+
+  .dlu-selector__store.is-current .dlu-selector__current-badge {
+
+    display: inline-flex;
+
+  }
+
+  /* Confeti (lo crea el script al elegir una sede) */
+
+  .dlu-selector__confetti {
+
+    position: absolute;
+
+    z-index: 4;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+  }
+
+  /* ================================
+
+     ENTRADA
+
+     ================================ */
+
+  #dlu-store-selector.is-visible .dlu-selector__store {
+
+    animation: dlu-card-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s backwards;
+
+  }
+
+  #dlu-store-selector.is-visible .dlu-selector__store[data-store="centro"] {
+
+    animation-delay: 0.2s;
+
+  }
+
+  #dlu-store-selector.is-visible .dlu-selector__shape--supplies {
+
+    animation: dlu-arch-in 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+
+  }
+
+  @keyframes dlu-card-in {
+
+    from {
+
+      opacity: 0;
+
+      transform: translateY(26px) scale(0.92) rotate(-1.5deg);
+
+    }
+
+  }
+
+  @keyframes dlu-arch-in {
+
+    from { transform: translateY(105%); }
+
+  }
+
+  /* ================================
+
+     MÓVIL
+
+     ================================ */
+
+  @media screen and (max-width: 749px) {
+
+    #dlu-store-selector {
+
+      align-items: flex-start;
+
+      padding: 16px;
+
+    }
+
+    .dlu-selector__dialog {
+
+      max-width: 100%;
+
+      margin: auto 0;
+
+      padding: 40px 16px 18px;
+
+      border-radius: 22px;
+
+    }
+
+    .dlu-selector__header {
+
+      margin-bottom: 22px;
+
+    }
+
+    .dlu-selector__title {
+
+      font-size: 28px;
+
+    }
+
+    .dlu-selector__description {
+
+      font-size: 14px;
+
+    }
+
+    .dlu-selector__stores {
+
+      grid-template-columns: 1fr;
+
+      gap: 12px;
+
+    }
+
+    .dlu-selector__store {
+
+      min-height: 190px;
+
+      padding: 22px 20px 20px;
+
+      border-radius: 20px;
+
+    }
+
+    .dlu-selector__store-name {
+
+      font-size: 42px;
+
+    }
+
+    .dlu-selector__store-action {
+
+      margin-top: 20px;
+
+    }
+
+  }
+
+  /* ================================
+
+     MOVIMIENTO REDUCIDO
+
+     ================================ */
+
+  @media (prefers-reduced-motion: reduce) {
+
+    #dlu-store-selector,
+
+    .dlu-selector__dialog,
+
+    .dlu-selector__store,
+
+    .dlu-selector__shape,
+
+    .dlu-selector__supply,
+
+    .dlu-selector__store-action {
+
+      transition: none !important;
+
+    }
+
+    .dlu-selector__store,
+
+    .dlu-selector__shape,
+
+    .dlu-selector__letter,
+
+    .dlu-selector__deco--front,
+
+    .dlu-selector__store-action::after,
+
+    .dlu-selector__store-action svg {
+
+      animation: none !important;
+
+    }
+
+  }
+
+</style>
+
+<div
+
+  id="dlu-store-selector"
+
+  role="dialog"
+
+  aria-modal="true"
+
+  aria-labelledby="dlu-selector-title"
+
+  aria-describedby="dlu-selector-description"
+
+>
+
+  <div class="dlu-selector__dialog">
+
+    <div class="dlu-selector__header">
+
+      <h2
+
+        id="dlu-selector-title"
+
+        class="dlu-selector__title"
+
+      >
+
+        ¿Dónde quieres comprar?
+
+      </h2>
+
+      <p
+
+        id="dlu-selector-description"
+
+        class="dlu-selector__description"
+
+      >
+
+        Selecciona la sede en la que deseas realizar tu compra.
+
+      </p>
+
+    </div>
+
+    <div class="dlu-selector__stores">
+
+     
+
+      <!-- =========================
+
+           CENTRO
+
+           ========================= -->
+
+      <a
+
+        href="https://distrilaunica.com.co/"
+
+        class="dlu-selector__store"
+
+        data-store="centro"
+
+      >
+
+        <!-- Útiles escolares: lápices de colores, regla y borrador -->
+
+        <svg
+
+          class="dlu-selector__shape dlu-selector__shape--supplies"
+
+          viewBox="0 0 160 190"
+
+          aria-hidden="true"
+
+          focusable="false"
+
+        >
+
+          <g class="dlu-selector__supply dlu-selector__arch" style="--k: 0">
+
+            <path class="dlu-selector__arch-shape" d="M4 190V108A76 76 0 0 1 156 108V190Z"></path>
+
+          </g>
+
+          <!-- Borrador rosa al fondo -->
+
+          <g class="dlu-selector__supply dlu-selector__eraser" style="--k: 2">
+
+            <rect class="dlu-selector__s-pink dlu-selector__s-outline" x="123" y="144" width="28" height="14" rx="4"></rect>
+
+            <path d="M137 145v12" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"></path>
+
+            <path d="M126 147h7" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"></path>
+
+          </g>
+
+          <!-- Regla con borde, escala legible y remate azul -->
+
+          <g class="dlu-selector__supply dlu-selector__ruler" style="--k: 1">
+
+            <g transform="translate(22 190) rotate(-7)">
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-9" y="-94" width="20" height="94" rx="3"></rect>
+
+              <rect class="dlu-selector__s-blue" x="-9" y="-94" width="20" height="10" rx="3"></rect>
+
+              <path class="dlu-selector__s-ticks" d="M-6 -16h9M-6 -26h5M-6 -36h9M-6 -46h5M-6 -56h9M-6 -66h5M-6 -76h9"></path>
+
+            </g>
+
+          </g>
+
+          <!-- Lápiz azul -->
+
+          <g class="dlu-selector__supply dlu-selector__pencil" style="--k: 2">
+
+            <g transform="translate(61 190) rotate(-9)">
+
+              <path class="dlu-selector__s-wood dlu-selector__s-outline" d="M-7 -105 0 -122 7 -105Z"></path>
+
+              <path class="dlu-selector__s-blue" d="M-2.5 -116 0 -122 2.5 -116Z"></path>
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-7" y="-106" width="14" height="90" rx="2.5"></rect>
+
+              <rect class="dlu-selector__s-blue-soft" x="-3" y="-103" width="6" height="84" rx="1.5"></rect>
+
+              <path class="dlu-selector__s-ridge" d="M4 -103v84"></path>
+
+              <rect class="dlu-selector__s-metal" x="-7" y="-19" width="14" height="5" rx="1"></rect>
+
+              <path d="M-5 -17h10M-5 -15h10" stroke="#6d8494" stroke-width="0.8"></path>
+
+              <rect class="dlu-selector__s-blue" x="-7" y="-14" width="14" height="11" rx="2.5"></rect>
+
+              <path d="M-5 -5h10" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.8"></path>
+
+            </g>
+
+          </g>
+
+          <!-- Lápiz rosa, el más alto -->
+
+          <g class="dlu-selector__supply dlu-selector__pencil" style="--k: 3">
+
+            <g transform="translate(89 190)">
+
+              <path class="dlu-selector__s-wood dlu-selector__s-outline" d="M-7 -119 0 -136 7 -119Z"></path>
+
+              <path class="dlu-selector__s-pink" d="M-2.5 -130 0 -136 2.5 -130Z"></path>
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-7" y="-120" width="14" height="104" rx="2.5"></rect>
+
+              <rect class="dlu-selector__s-pink-soft" x="-3" y="-117" width="6" height="98" rx="1.5"></rect>
+
+              <path class="dlu-selector__s-ridge" d="M4 -117v98"></path>
+
+              <rect class="dlu-selector__s-metal" x="-7" y="-19" width="14" height="5" rx="1"></rect>
+
+              <path d="M-5 -17h10M-5 -15h10" stroke="#6d8494" stroke-width="0.8"></path>
+
+              <rect class="dlu-selector__s-pink" x="-7" y="-14" width="14" height="11" rx="2.5"></rect>
+
+              <path d="M-5 -5h10" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.8"></path>
+
+            </g>
+
+          </g>
+
+          <!-- Lápiz naranja -->
+
+          <g class="dlu-selector__supply dlu-selector__pencil" style="--k: 4">
+
+            <g transform="translate(116 190) rotate(8)">
+
+              <path class="dlu-selector__s-wood dlu-selector__s-outline" d="M-7 -94 0 -111 7 -94Z"></path>
+
+              <path class="dlu-selector__s-orange" d="M-2.5 -105 0 -111 2.5 -105Z"></path>
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-7" y="-95" width="14" height="79" rx="2.5"></rect>
+
+              <rect class="dlu-selector__s-orange" x="-3" y="-92" width="6" height="73" rx="1.5"></rect>
+
+              <path class="dlu-selector__s-ridge" d="M4 -92v73"></path>
+
+              <rect class="dlu-selector__s-metal" x="-7" y="-19" width="14" height="5" rx="1"></rect>
+
+              <path d="M-5 -17h10M-5 -15h10" stroke="#6d8494" stroke-width="0.8"></path>
+
+              <rect class="dlu-selector__s-orange" x="-7" y="-14" width="14" height="11" rx="2.5"></rect>
+
+            </g>
+
+          </g>
+
+        </svg>
+
+        <!-- Fondo: ruta punteada con rizo -->
+
+        <svg
+
+          class="dlu-selector__deco dlu-selector__deco--back"
+
+          viewBox="0 0 300 240"
+
+          preserveAspectRatio="xMaxYMid slice"
+
+          aria-hidden="true"
+
+        >
+
+          <path
+
+            class="dlu-selector__deco-path"
+
+            d="M-40 205 C 30 225, 90 215, 130 190 C 150 176, 160 168, 175 163 A 28 28 0 0 0 203 135 A 28 28 0 0 0 175 107 A 28 28 0 0 0 147 135 A 28 28 0 0 0 175 163 C 210 160, 238 125, 250 97"
+
+          ></path>
+
+        </svg>
+
+        <!-- Frente: avioncito (vuela por la ruta al hacer hover) -->
+
+        <svg
+
+          class="dlu-selector__deco dlu-selector__deco--front"
+
+          viewBox="0 0 300 240"
+
+          preserveAspectRatio="xMaxYMid slice"
+
+          aria-hidden="true"
+
+        >
+
+          <g>
+
+            <!-- Posición de reposo -->
+
+            <animateMotion
+
+              path="M244 108 L250 97"
+
+              dur="0.01s"
+
+              begin="0s"
+
+              fill="freeze"
+
+              rotate="auto"
+
+            ></animateMotion>
+
+            <!-- Vuelo: sale por arriba a la derecha, vuelve por la ruta, hace el rizo y aterriza -->
+
+            <animateMotion
+
+              data-fly
+
+              path="M250 97 L330 38 M-40 205 C 30 225, 90 215, 130 190 C 150 176, 160 168, 175 163 A 28 28 0 0 0 203 135 A 28 28 0 0 0 175 107 A 28 28 0 0 0 147 135 A 28 28 0 0 0 175 163 C 210 160, 238 125, 250 97"
+
+              dur="3.4s"
+
+              begin="indefinite"
+
+              fill="remove"
+
+              rotate="auto"
+
+            ></animateMotion>
+
+            <g transform="rotate(30) scale(0.95) translate(-32 -20)">
+
+              <path d="M2 18 62 2 40 38 28 25z" fill="#ffffff"></path>
+
+              <path d="M28 25 62 2 34 31z" fill="#d9e5ea"></path>
+
+              <path d="M28 25 31 36 34 31z" fill="#bccbd2"></path>
+
+            </g>
+
+          </g>
+
+        </svg>
+
+        <span class="dlu-selector__current-badge">Estás aquí</span>
+
+        <div>
+
+          <h3 class="dlu-selector__store-name">
+
+            <span class="dlu-selector__store-eyebrow">Sede</span>
+
+            <span class="dlu-selector__store-word">Centro</span>
+
+          </h3>
+
+        </div>
+
+        <div class="dlu-selector__store-action">
+
+          <span data-action-label>
+
+            Comprar en Centro
+
+          </span>
+
+          <svg
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2.6"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+            aria-hidden="true"
+
+          >
+
+            <path d="M5 12h14"></path>
+
+            <path d="m13 6 6 6-6 6"></path>
+
+          </svg>
+
+        </div>
+
+      </a>
+
+
+
+ <!-- =========================
+
+           SUR
+
+           ========================= -->
+
+      <a
+
+        href="https://sur.distrilaunica.com.co/"
+
+        class="dlu-selector__store"
+
+        data-store="sur"
+
+      >
+
+        <!-- Útiles escolares: lápices de colores, regla y borrador -->
+
+        <svg
+
+          class="dlu-selector__shape dlu-selector__shape--supplies"
+
+          viewBox="0 0 160 190"
+
+          aria-hidden="true"
+
+          focusable="false"
+
+        >
+
+          <g class="dlu-selector__supply dlu-selector__arch" style="--k: 0">
+
+            <path class="dlu-selector__arch-shape" d="M4 190V108A76 76 0 0 1 156 108V190Z"></path>
+
+          </g>
+
+          <!-- Borrador rosa al fondo -->
+
+          <g class="dlu-selector__supply dlu-selector__eraser" style="--k: 2">
+
+            <rect class="dlu-selector__s-pink dlu-selector__s-outline" x="123" y="144" width="28" height="14" rx="4"></rect>
+
+            <path d="M137 145v12" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"></path>
+
+            <path d="M126 147h7" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"></path>
+
+          </g>
+
+          <!-- Regla con borde, escala legible y remate azul -->
+
+          <g class="dlu-selector__supply dlu-selector__ruler" style="--k: 1">
+
+            <g transform="translate(22 190) rotate(-7)">
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-9" y="-94" width="20" height="94" rx="3"></rect>
+
+              <rect class="dlu-selector__s-blue" x="-9" y="-94" width="20" height="10" rx="3"></rect>
+
+              <path class="dlu-selector__s-ticks" d="M-6 -16h9M-6 -26h5M-6 -36h9M-6 -46h5M-6 -56h9M-6 -66h5M-6 -76h9"></path>
+
+            </g>
+
+          </g>
+
+          <!-- Lápiz azul -->
+
+          <g class="dlu-selector__supply dlu-selector__pencil" style="--k: 2">
+
+            <g transform="translate(61 190) rotate(-9)">
+
+              <path class="dlu-selector__s-wood dlu-selector__s-outline" d="M-7 -105 0 -122 7 -105Z"></path>
+
+              <path class="dlu-selector__s-blue" d="M-2.5 -116 0 -122 2.5 -116Z"></path>
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-7" y="-106" width="14" height="90" rx="2.5"></rect>
+
+              <rect class="dlu-selector__s-blue-soft" x="-3" y="-103" width="6" height="84" rx="1.5"></rect>
+
+              <path class="dlu-selector__s-ridge" d="M4 -103v84"></path>
+
+              <rect class="dlu-selector__s-metal" x="-7" y="-19" width="14" height="5" rx="1"></rect>
+
+              <path d="M-5 -17h10M-5 -15h10" stroke="#6d8494" stroke-width="0.8"></path>
+
+              <rect class="dlu-selector__s-blue" x="-7" y="-14" width="14" height="11" rx="2.5"></rect>
+
+              <path d="M-5 -5h10" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.8"></path>
+
+            </g>
+
+          </g>
+
+          <!-- Lápiz rosa, el más alto -->
+
+          <g class="dlu-selector__supply dlu-selector__pencil" style="--k: 3">
+
+            <g transform="translate(89 190)">
+
+              <path class="dlu-selector__s-wood dlu-selector__s-outline" d="M-7 -119 0 -136 7 -119Z"></path>
+
+              <path class="dlu-selector__s-pink" d="M-2.5 -130 0 -136 2.5 -130Z"></path>
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-7" y="-120" width="14" height="104" rx="2.5"></rect>
+
+              <rect class="dlu-selector__s-pink-soft" x="-3" y="-117" width="6" height="98" rx="1.5"></rect>
+
+              <path class="dlu-selector__s-ridge" d="M4 -117v98"></path>
+
+              <rect class="dlu-selector__s-metal" x="-7" y="-19" width="14" height="5" rx="1"></rect>
+
+              <path d="M-5 -17h10M-5 -15h10" stroke="#6d8494" stroke-width="0.8"></path>
+
+              <rect class="dlu-selector__s-pink" x="-7" y="-14" width="14" height="11" rx="2.5"></rect>
+
+              <path d="M-5 -5h10" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.8"></path>
+
+            </g>
+
+          </g>
+
+          <!-- Lápiz naranja -->
+
+          <g class="dlu-selector__supply dlu-selector__pencil" style="--k: 4">
+
+            <g transform="translate(116 190) rotate(8)">
+
+              <path class="dlu-selector__s-wood dlu-selector__s-outline" d="M-7 -94 0 -111 7 -94Z"></path>
+
+              <path class="dlu-selector__s-orange" d="M-2.5 -105 0 -111 2.5 -105Z"></path>
+
+              <rect class="dlu-selector__s-white dlu-selector__s-outline" x="-7" y="-95" width="14" height="79" rx="2.5"></rect>
+
+              <rect class="dlu-selector__s-orange" x="-3" y="-92" width="6" height="73" rx="1.5"></rect>
+
+              <path class="dlu-selector__s-ridge" d="M4 -92v73"></path>
+
+              <rect class="dlu-selector__s-metal" x="-7" y="-19" width="14" height="5" rx="1"></rect>
+
+              <path d="M-5 -17h10M-5 -15h10" stroke="#6d8494" stroke-width="0.8"></path>
+
+              <rect class="dlu-selector__s-orange" x="-7" y="-14" width="14" height="11" rx="2.5"></rect>
+
+            </g>
+
+          </g>
+
+        </svg>
+
+        <!-- Fondo: ruta punteada con rizo -->
+
+        <svg
+
+          class="dlu-selector__deco dlu-selector__deco--back"
+
+          viewBox="0 0 300 240"
+
+          preserveAspectRatio="xMaxYMid slice"
+
+          aria-hidden="true"
+
+        >
+
+          <path
+
+            class="dlu-selector__deco-path"
+
+            d="M-40 205 C 30 225, 90 215, 130 190 C 150 176, 160 168, 175 163 A 28 28 0 0 0 203 135 A 28 28 0 0 0 175 107 A 28 28 0 0 0 147 135 A 28 28 0 0 0 175 163 C 210 160, 238 125, 250 97"
+
+          ></path>
+
+        </svg>
+
+        <!-- Frente: avioncito (vuela por la ruta al hacer hover) -->
+
+        <svg
+
+          class="dlu-selector__deco dlu-selector__deco--front"
+
+          viewBox="0 0 300 240"
+
+          preserveAspectRatio="xMaxYMid slice"
+
+          aria-hidden="true"
+
+        >
+
+          <g>
+
+            <!-- Posición de reposo -->
+
+            <animateMotion
+
+              path="M244 108 L250 97"
+
+              dur="0.01s"
+
+              begin="0s"
+
+              fill="freeze"
+
+              rotate="auto"
+
+            ></animateMotion>
+
+            <!-- Vuelo: sale por arriba a la derecha, vuelve por la ruta, hace el rizo y aterriza -->
+
+            <animateMotion
+
+              data-fly
+
+              path="M250 97 L330 38 M-40 205 C 30 225, 90 215, 130 190 C 150 176, 160 168, 175 163 A 28 28 0 0 0 203 135 A 28 28 0 0 0 175 107 A 28 28 0 0 0 147 135 A 28 28 0 0 0 175 163 C 210 160, 238 125, 250 97"
+
+              dur="3.4s"
+
+              begin="indefinite"
+
+              fill="remove"
+
+              rotate="auto"
+
+            ></animateMotion>
+
+            <g transform="rotate(30) scale(0.95) translate(-32 -20)">
+
+              <path d="M2 18 62 2 40 38 28 25z" fill="#ffffff"></path>
+
+              <path d="M28 25 62 2 34 31z" fill="#d9e5ea"></path>
+
+              <path d="M28 25 31 36 34 31z" fill="#bccbd2"></path>
+
+            </g>
+
+          </g>
+
+        </svg>
+
+        <span class="dlu-selector__current-badge">Estás aquí</span>
+
+        <div>
+
+          <h3 class="dlu-selector__store-name">
+
+            <span class="dlu-selector__store-eyebrow">Sede</span>
+
+            <span class="dlu-selector__store-word">Sur</span>
+
+          </h3>
+
+        </div>
+
+        <div class="dlu-selector__store-action">
+
+          <span data-action-label>
+
+            Comprar en Sur
+
+          </span>
+
+          <svg
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2.6"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+            aria-hidden="true"
+
+          >
+
+            <path d="M5 12h14"></path>
+
+            <path d="m13 6 6 6-6 6"></path>
+
+          </svg>
+
+        </div>
+
+      </a>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+(function () {
+
+  'use strict';
+
+  /* =========================================================
+
+     CONFIGURACIÓN
+
+     ========================================================= */
+
+  const COOKIE_NAME = 'dlu_selected_store';
+
+  // Número de días durante los cuales
+
+  // recordaremos la selección.
+
+  const COOKIE_DAYS = 30;
+
+  /*
+
+    Sede que se marca como "Estás aquí" cuando el dominio
+
+    NO es ninguno de los dos oficiales (editor de temas,
+
+    vista previa de Shopify, dominio .myshopify.com, etc.).
+
+    En la tienda SUR    -> 'sur'
+
+    En la tienda CENTRO -> 'centro'
+
+  */
+
+  const FALLBACK_STORE = 'centro';
+
+  const STORES = {
+
+    centro: {
+
+      hostname: 'distrilaunica.com.co',
+
+      url: 'https://distrilaunica.com.co/',
+
+      label: 'Centro'
+
+    },
+
+    sur: {
+
+      hostname: 'sur.distrilaunica.com.co',
+
+      url: 'https://sur.distrilaunica.com.co/',
+
+      label: 'Sur'
+
+    }
+
+  };
+
+  // Duración del vuelo del avioncito (ms). Debe coincidir
+
+  // con el atributo dur de la animación en el HTML (3.4s).
+
+  const FLIGHT_MS = 3400;
+
+  // Tiempo que dura el confeti antes de cambiar de sede (ms).
+
+  const SELECT_DELAY_MS = 500;
+
+  // Colores del confeti (blanco y azules de la marca).
+
+  const CONFETTI_COLORS = [
+
+    '#ffffff', '#ffffff', '#1b3c73', '#1881c1'
+
+  ];
+
+  /* =========================================================
+
+     ELEMENTOS
+
+     ========================================================= */
+
+  const modal = document.getElementById('dlu-store-selector');
+
+  if (!modal) return;
+
+  const storeButtons = modal.querySelectorAll('[data-store]');
+
+  const prefersReducedMotion =
+
+    window.matchMedia &&
+
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* =========================================================
+
+     IDENTIFICAR TIENDA ACTUAL
+
+     ========================================================= */
+
+  function getCurrentStore() {
+
+    const hostname = window.location.hostname
+
+      .replace(/^www\./, '')
+
+      .toLowerCase();
+
+    if (
+
+      hostname === STORES.sur.hostname ||
+
+      hostname.startsWith('sur.')
+
+    ) {
+
+      return 'sur';
+
+    }
+
+    if (hostname === STORES.centro.hostname) {
+
+      return 'centro';
+
+    }
+
+    // Dominio no oficial (vista previa, editor de temas, etc.)
+
+    return FALLBACK_STORE;
+
+  }
+
+  const currentStore = getCurrentStore();
+
+  /* =========================================================
+
+     COOKIE
+
+     ========================================================= */
+
+  function getCookie(name) {
+
+    const cookies = document.cookie
+
+      ? document.cookie.split('; ')
+
+      : [];
+
+    for (let i = 0; i < cookies.length; i++) {
+
+      const parts = cookies[i].split('=');
+
+      const cookieName = decodeURIComponent(parts.shift());
+
+      const cookieValue = parts.join('=');
+
+      if (cookieName === name) {
+
+        return decodeURIComponent(cookieValue);
+
+      }
+
+    }
+
+    return null;
+
+  }
+
+  function setStoreCookie(store) {
+
+    const maxAge = COOKIE_DAYS * 24 * 60 * 60;
+
+    const hostname = window.location.hostname.toLowerCase();
+
+    let cookie = COOKIE_NAME + '=' + encodeURIComponent(store);
+
+    cookie += '; Path=/';
+
+    cookie += '; Max-Age=' + maxAge;
+
+    cookie += '; SameSite=Lax';
+
+    /*
+
+      Al utilizar .distrilaunica.com.co como dominio,
+
+      la cookie puede ser leída tanto por:
+
+      distrilaunica.com.co
+
+      sur.distrilaunica.com.co
+
+    */
+
+    if (
+
+      hostname === 'distrilaunica.com.co' ||
+
+      hostname.endsWith('.distrilaunica.com.co')
+
+    ) {
+
+      cookie += '; Domain=.distrilaunica.com.co';
+
+    }
+
+    if (window.location.protocol === 'https:') {
+
+      cookie += '; Secure';
+
+    }
+
+    document.cookie = cookie;
+
+  }
+
+  /* =========================================================
+
+     LETRAS QUE SALTAN
+
+     Separa el nombre de la sede en letras para animarlas.
+
+     Se conserva el texto completo para lectores de pantalla.
+
+     ========================================================= */
+
+  modal.querySelectorAll('.dlu-selector__store-word').forEach(function (word) {
+
+    const text = word.textContent.trim();
+
+    word.textContent = '';
+
+    const fullText = document.createElement('span');
+
+    fullText.className = 'dlu-selector__sr';
+
+    fullText.textContent = text;
+
+    word.appendChild(fullText);
+
+    Array.from(text).forEach(function (character, index) {
+
+      const letter = document.createElement('span');
+
+      letter.className = 'dlu-selector__letter';
+
+      letter.setAttribute('aria-hidden', 'true');
+
+      letter.style.setProperty('--i', index);
+
+      letter.textContent = character;
+
+      word.appendChild(letter);
+
+    });
+
+  });
+
+  /* =========================================================
+
+     AVIONCITO
+
+     ========================================================= */
+
+  function flyPlane(card) {
+
+    if (prefersReducedMotion) return;
+
+    // Evita reiniciar el vuelo mientras todavía está en el aire
+
+    if (card.__dluFlying) return;
+
+    const flight = card.querySelector('animateMotion[data-fly]');
+
+    if (!flight || typeof flight.beginElement !== 'function') return;
+
+    card.__dluFlying = true;
+
+    try {
+
+      flight.beginElement();
+
+    } catch (error) {
+
+      card.__dluFlying = false;
+
+      return;
+
+    }
+
+    window.setTimeout(function () {
+
+      card.__dluFlying = false;
+
+    }, FLIGHT_MS + 100);
+
+  }
+
+  storeButtons.forEach(function (card) {
+
+    card.addEventListener('mouseenter', function () {
+
+      flyPlane(card);
+
+    });
+
+    card.addEventListener('focus', function () {
+
+      flyPlane(card);
+
+    });
+
+    card.addEventListener('touchstart', function () {
+
+      flyPlane(card);
+
+    }, { passive: true });
+
+  });
+
+  /* =========================================================
+
+     CONFETI
+
+     Explosión de colores que sale del botón al elegir sede.
+
+     ========================================================= */
+
+  function burstConfetti(card) {
+
+    if (prefersReducedMotion || typeof Element.prototype.animate !== 'function') {
+
+      return;
+
+    }
+
+    const action = card.querySelector('.dlu-selector__store-action');
+
+    if (!action) return;
+
+    const cardRect = card.getBoundingClientRect();
+
+    const actionRect = action.getBoundingClientRect();
+
+    const originX = actionRect.left - cardRect.left + actionRect.width / 2;
+
+    const originY = actionRect.top - cardRect.top + actionRect.height / 2;
+
+    for (let i = 0; i < 22; i++) {
+
+      const piece = document.createElement('span');
+
+      const size = 6 + Math.random() * 8;
+
+      const angle = Math.random() * Math.PI * 2;
+
+      const distance = 70 + Math.random() * 130;
+
+      piece.className = 'dlu-selector__confetti';
+
+      piece.setAttribute('aria-hidden', 'true');
+
+      piece.style.width = size + 'px';
+
+      piece.style.height = size + 'px';
+
+      piece.style.left = (originX - size / 2) + 'px';
+
+      piece.style.top = (originY - size / 2) + 'px';
+
+      piece.style.background =
+
+        CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+
+      // Algunos trozos son cuadrados para dar variedad
+
+      if (i % 3 === 0) {
+
+        piece.style.borderRadius = '2px';
+
+      }
+
+      card.appendChild(piece);
+
+      const dx = Math.cos(angle) * distance;
+
+      const dy = Math.sin(angle) * distance - 30;
+
+      const animation = piece.animate(
+
+        [
+
+          { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
+
+          {
+
+            transform:
+
+              'translate(' + dx + 'px, ' + dy + 'px) rotate(' +
+
+              (Math.random() * 540 - 270) + 'deg) scale(0.4)',
+
+            opacity: 0
+
+          }
+
+        ],
+
+        {
+
+          duration: 650 + Math.random() * 450,
+
+          easing: 'cubic-bezier(0.15, 0.8, 0.3, 1)',
+
+          fill: 'forwards'
+
+        }
+
+      );
+
+      animation.onfinish = function () {
+
+        piece.remove();
+
+      };
+
+    }
+
+  }
+
+  /* =========================================================
+
+     ABRIR / CERRAR
+
+     ========================================================= */
+
+  function openSelector() {
+
+    modal.style.display = 'flex';
+
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(function () {
+
+      requestAnimationFrame(function () {
+
+        modal.classList.add('is-visible');
+
+      });
+
+    });
+
+    // Los avioncitos hacen un vuelo de bienvenida
+
+    storeButtons.forEach(function (card, index) {
+
+      window.setTimeout(function () {
+
+        flyPlane(card);
+
+      }, 700 + index * 450);
+
+    });
+
+  }
+
+  function closeSelector() {
+
+    modal.classList.remove('is-visible');
+
+    document.body.style.overflow = '';
+
+    window.setTimeout(function () {
+
+      modal.style.display = 'none';
+
+    }, 300);
+
+  }
+
+  /* =========================================================
+
+     MARCAR SEDE ACTUAL ("Estás aquí")
+
+     ========================================================= */
+
+  storeButtons.forEach(function (button) {
+
+    const store = button.getAttribute('data-store');
+
+    if (store === currentStore) {
+
+      button.classList.add('is-current');
+
+      const actionLabel =
+
+        button.querySelector('[data-action-label]');
+
+      if (actionLabel && STORES[store]) {
+
+        actionLabel.textContent =
+
+          'Continuar en ' + STORES[store].label;
+
+      }
+
+    }
+
+  });
+
+  /* =========================================================
+
+     SELECCIÓN
+
+     ========================================================= */
+
+  storeButtons.forEach(function (button) {
+
+    button.addEventListener('click', function (event) {
+
+      event.preventDefault();
+
+      // Evita doble clic mientras sale el confeti
+
+      if (button.__dluBusy) return;
+
+      const selectedStore =
+
+        button.getAttribute('data-store');
+
+      if (!STORES[selectedStore]) return;
+
+      button.__dluBusy = true;
+
+      /* Guardamos selección */
+
+      setStoreCookie(selectedStore);
+
+      /* Confeti */
+
+      button.classList.add('is-selected');
+
+      burstConfetti(button);
+
+      /*
+
+        Esperamos un instante para que se vea el confeti.
+
+        Si seleccionó la misma tienda en la que ya se encuentra,
+
+        cerramos. Si seleccionó otra, hacemos la redirección.
+
+      */
+
+      window.setTimeout(
+
+        function () {
+
+          if (selectedStore === currentStore) {
+
+            button.classList.remove('is-selected');
+
+            button.__dluBusy = false;
+
+            closeSelector();
+
+            return;
+
+          }
+
+          window.location.href =
+
+            STORES[selectedStore].url;
+
+        },
+
+        prefersReducedMotion ? 0 : SELECT_DELAY_MS
+
+      );
+
+    });
+
+  });
+
+  /* =========================================================
+
+     ¿DEBEMOS MOSTRAR EL POPUP?
+
+     ========================================================= */
+
+  const savedStore = getCookie(COOKIE_NAME);
+
+  const urlParams =
+
+    new URLSearchParams(window.location.search);
+
+  const forceSelector =
+
+    urlParams.get('choose_store') === '1';
+
+  /*
+
+    Mostrar cuando:
+
+    1. No existe selección guardada.
+
+    2. Se solicita manualmente mediante:
+
+       ?choose_store=1
+
+  */
+
+  if (!savedStore || forceSelector) {
+
+    openSelector();
+
+  }
+
+  /* =========================================================
+
+     API MANUAL
+
+     =========================================================
+
+     Permite abrirlo desde otro botón mediante:
+
+     window.DLUStoreSelector.open();
+
+     ========================================================= */
+
+  window.DLUStoreSelector = {
+
+    open: function () {
+
+      openSelector();
+
+    },
+
+    close: function () {
+
+      closeSelector();
+
+    }
+
+  };
+
+})();
+
+</script>

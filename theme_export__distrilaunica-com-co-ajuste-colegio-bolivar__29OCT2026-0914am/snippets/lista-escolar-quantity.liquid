@@ -1,0 +1,53 @@
+{% comment %}
+  Returns a quantity adjusted to the variant quantity rules and available inventory.
+
+  Accepts:
+  - variant: {Object} Product variant (required)
+  - quantity: {Number} Desired quantity (optional)
+
+  Usage:
+  {% render 'lista-escolar-quantity', variant: item_variant, quantity: 2 %}
+{% endcomment %}
+{%- liquid
+  assign adjusted_quantity = quantity | default: 1 | plus: 0
+  assign quantity_min = 1
+  assign quantity_step = 1
+  assign quantity_max = nil
+
+  if variant.quantity_rule
+    assign quantity_min = variant.quantity_rule.min | default: 1
+    assign quantity_step = variant.quantity_rule.increment | default: 1
+    assign quantity_max = variant.quantity_rule.max
+  endif
+
+  if variant.inventory_management != blank and variant.inventory_policy == 'deny' and variant.inventory_quantity != blank
+    if quantity_max == nil or variant.inventory_quantity < quantity_max
+      assign quantity_max = variant.inventory_quantity
+    endif
+  endif
+
+  if adjusted_quantity < quantity_min
+    assign adjusted_quantity = quantity_min
+  endif
+
+  if quantity_max != nil and adjusted_quantity > quantity_max
+    assign adjusted_quantity = quantity_max
+  endif
+
+  if quantity_step > 1
+    assign quantity_difference = adjusted_quantity | minus: quantity_min
+    assign quantity_remainder = quantity_difference | modulo: quantity_step
+    if quantity_remainder != 0
+      assign adjusted_quantity = adjusted_quantity | plus: quantity_step | minus: quantity_remainder
+    endif
+    if quantity_max != nil and adjusted_quantity > quantity_max
+      assign adjusted_quantity = quantity_max
+    endif
+  endif
+
+  if adjusted_quantity < 1
+    assign adjusted_quantity = 1
+  endif
+
+  echo adjusted_quantity
+-%}

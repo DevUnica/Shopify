@@ -1,0 +1,1331 @@
+{% comment %}
+  ============================================================
+  SECCIÓN: VIDEOS DE YOUTUBE + CARRUSEL MOBILE
+  SOPORTA VIDEOS HORIZONTALES 16:9 Y VERTICALES 9:16
+  ============================================================
+{% endcomment %}
+
+{%- assign section_id = 'youtube-videos-' | append: section.id -%}
+
+<style>
+  #{{ section_id }} {
+    --yt-columns-desktop: {{ section.settings.columns_desktop }};
+    --yt-gap-desktop: {{ section.settings.gap_desktop }}px;
+    --yt-gap-mobile: {{ section.settings.gap_mobile }}px;
+    --yt-card-radius: {{ section.settings.video_radius }}px;
+    --yt-mobile-width: {{ section.settings.mobile_card_width }}%;
+    --yt-title-size-desktop: {{ section.settings.title_size_desktop }}px;
+    --yt-title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --yt-item-title-size-desktop: {{ section.settings.item_title_size_desktop }}px;
+    --yt-item-title-size-mobile: {{ section.settings.item_title_size_mobile }}px;
+
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+
+  /* =========================================================
+     CONTENEDOR
+     ========================================================= */
+
+  #{{ section_id }} .youtube-videos__container {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: {{ section.settings.padding_horizontal }}px;
+    padding-right: {{ section.settings.padding_horizontal }}px;
+    box-sizing: border-box;
+  }
+
+  {% if section.settings.container_width == 'fixed' %}
+    #{{ section_id }} .youtube-videos__container {
+      max-width: {{ section.settings.max_width }}px;
+    }
+  {% endif %}
+
+
+  /* =========================================================
+     ENCABEZADO
+     ========================================================= */
+
+  #{{ section_id }} .youtube-videos__header {
+    margin-bottom: {{ section.settings.heading_spacing }}px;
+
+    {% case section.settings.heading_alignment %}
+      {% when 'left' %}
+        text-align: left;
+      {% when 'right' %}
+        text-align: right;
+      {% else %}
+        text-align: center;
+    {% endcase %}
+  }
+
+  #{{ section_id }} .youtube-videos__heading {
+    margin: 0;
+    padding: 0;
+    color: {{ section.settings.heading_color }};
+    font-size: var(--yt-title-size-desktop);
+    line-height: 1.2;
+  }
+
+  #{{ section_id }} .youtube-videos__description {
+    margin-top: 8px;
+    color: {{ section.settings.text_color }};
+  }
+
+  #{{ section_id }} .youtube-videos__description p {
+    margin: 0;
+  }
+
+
+  /* =========================================================
+     GRID DESKTOP
+     ========================================================= */
+
+  #{{ section_id }} .youtube-videos__track {
+    display: grid;
+    grid-template-columns: repeat(
+      var(--yt-columns-desktop),
+      minmax(0, 1fr)
+    );
+    gap: var(--yt-gap-desktop);
+    width: 100%;
+    align-items: start;
+  }
+
+
+  /* =========================================================
+     TARJETA
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* =========================================================
+     CONTENEDOR EXTERNO DEL VIDEO
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__media-wrapper {
+    width: 100%;
+    display: flex;
+  }
+
+  #{{ section_id }} .youtube-video-card__media-wrapper--left {
+    justify-content: flex-start;
+  }
+
+  #{{ section_id }} .youtube-video-card__media-wrapper--center {
+    justify-content: center;
+  }
+
+  #{{ section_id }} .youtube-video-card__media-wrapper--right {
+    justify-content: flex-end;
+  }
+
+
+  /* =========================================================
+     VIDEO BASE
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--yt-card-radius);
+    background-color: #000000;
+  }
+
+
+  /* =========================================================
+     VIDEO HORIZONTAL 16:9
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__media--horizontal {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+
+  /* =========================================================
+     VIDEO VERTICAL 9:16
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__media--vertical {
+    width: {{ section.settings.vertical_width_desktop }}%;
+    max-width: {{ section.settings.vertical_max_width }}px;
+    aspect-ratio: 9 / 16;
+  }
+
+
+  /* =========================================================
+     IFRAME
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__media iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+
+  /* =========================================================
+     PLACEHOLDER
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__placeholder {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background-color: #f4f4f4;
+    color: #666666;
+
+    text-align: center;
+    font-size: 14px;
+  }
+
+
+  /* =========================================================
+     TEXTO DE CADA VIDEO
+     ========================================================= */
+
+  #{{ section_id }} .youtube-video-card__content {
+    padding-top: {{ section.settings.card_text_spacing }}px;
+
+    {% case section.settings.card_alignment %}
+      {% when 'center' %}
+        text-align: center;
+      {% when 'right' %}
+        text-align: right;
+      {% else %}
+        text-align: left;
+    {% endcase %}
+  }
+
+  #{{ section_id }} .youtube-video-card__title {
+    margin: 0;
+    padding: 0;
+
+    color: {{ section.settings.card_title_color }};
+
+    font-size: var(--yt-item-title-size-desktop);
+    font-weight: {{ section.settings.card_title_weight }};
+    line-height: 1.35;
+  }
+
+  #{{ section_id }} .youtube-video-card__text {
+    margin-top: 6px;
+
+    color: {{ section.settings.card_text_color }};
+
+    font-size: {{ section.settings.card_text_size }}px;
+    line-height: 1.5;
+  }
+
+  #{{ section_id }} .youtube-video-card__text p {
+    margin: 0;
+  }
+
+
+  /* =========================================================
+     NAVEGACIÓN MOBILE
+     ========================================================= */
+
+  #{{ section_id }} .youtube-videos__mobile-nav {
+    display: none;
+  }
+
+
+  /* =========================================================
+     MOBILE
+     ========================================================= */
+
+  @media screen and (max-width: 767px) {
+
+    #{{ section_id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    #{{ section_id }} .youtube-videos__container {
+      padding-left: {{ section.settings.padding_horizontal_mobile }}px;
+      padding-right: {{ section.settings.padding_horizontal_mobile }}px;
+    }
+
+    #{{ section_id }} .youtube-videos__heading {
+      font-size: var(--yt-title-size-mobile);
+    }
+
+    #{{ section_id }} .youtube-video-card__title {
+      font-size: var(--yt-item-title-size-mobile);
+    }
+
+
+    /* =======================================================
+       CARRUSEL MOBILE
+       ======================================================= */
+
+    #{{ section_id }} .youtube-videos__track {
+      display: flex;
+      align-items: flex-start;
+
+      width: auto;
+      gap: var(--yt-gap-mobile);
+
+      overflow-x: auto;
+      overflow-y: hidden;
+
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+
+      margin-left: calc(
+        -1 * {{ section.settings.padding_horizontal_mobile }}px
+      );
+
+      margin-right: calc(
+        -1 * {{ section.settings.padding_horizontal_mobile }}px
+      );
+
+      padding-left: {{ section.settings.padding_horizontal_mobile }}px;
+      padding-right: {{ section.settings.padding_horizontal_mobile }}px;
+      padding-bottom: 5px;
+    }
+
+    #{{ section_id }} .youtube-videos__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    #{{ section_id }} .youtube-video-card {
+      flex: 0 0 var(--yt-mobile-width);
+      width: var(--yt-mobile-width);
+      max-width: var(--yt-mobile-width);
+
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+
+    /* =======================================================
+       VIDEO VERTICAL EN MOBILE
+       ======================================================= */
+
+    #{{ section_id }} .youtube-video-card__media--vertical {
+      width: {{ section.settings.vertical_width_mobile }}%;
+      max-width: none;
+    }
+
+
+    /* =======================================================
+       FLECHAS MOBILE
+       ======================================================= */
+
+    {% if section.settings.show_mobile_arrows %}
+
+      #{{ section_id }} .youtube-videos__mobile-nav {
+        display: flex;
+        align-items: center;
+        justify-content: {{ section.settings.mobile_nav_alignment }};
+
+        gap: 10px;
+
+        margin-top: {{ section.settings.mobile_nav_spacing }}px;
+      }
+
+      #{{ section_id }} .youtube-videos__arrow {
+        appearance: none;
+        -webkit-appearance: none;
+
+        width: 42px;
+        height: 42px;
+
+        padding: 0;
+        margin: 0;
+
+        border: 1px solid {{ section.settings.arrow_border_color }};
+        border-radius: 50%;
+
+        background-color: {{ section.settings.arrow_background }};
+        color: {{ section.settings.arrow_color }};
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+
+        transition:
+          background-color 0.25s ease,
+          border-color 0.25s ease,
+          color 0.25s ease;
+      }
+
+      #{{ section_id }} .youtube-videos__arrow:hover {
+        background-color: {{ section.settings.arrow_hover_background }};
+        border-color: {{ section.settings.arrow_hover_background }};
+        color: {{ section.settings.arrow_hover_color }};
+      }
+
+      #{{ section_id }} .youtube-videos__arrow::before,
+      #{{ section_id }} .youtube-videos__arrow::after {
+        display: none !important;
+      }
+
+      #{{ section_id }} .youtube-videos__arrow svg {
+        width: 18px;
+        height: 18px;
+
+        display: block;
+
+        fill: none;
+        stroke: currentColor;
+      }
+
+    {% endif %}
+  }
+</style>
+
+
+<section
+  id="{{ section_id }}"
+  class="youtube-videos-section"
+  data-youtube-videos-section="{{ section.id }}"
+>
+
+  <div class="youtube-videos__container">
+
+
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+
+      <div class="youtube-videos__header">
+
+        {% if section.settings.heading != blank %}
+
+          <h2 class="youtube-videos__heading">
+            {{ section.settings.heading }}
+          </h2>
+
+        {% endif %}
+
+
+        {% if section.settings.description != blank %}
+
+          <div class="youtube-videos__description">
+            {{ section.settings.description }}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+    {% endif %}
+
+
+
+    {% if section.blocks.size > 0 %}
+
+      <div
+        class="youtube-videos__track"
+        id="YoutubeTrack-{{ section.id }}"
+      >
+
+        {% for block in section.blocks %}
+
+
+          {%- assign youtube_id = blank -%}
+          {%- assign video_url = block.settings.youtube_url -%}
+
+
+          {% if video_url != blank %}
+
+            {% if video_url contains 'youtu.be/' %}
+
+              {%- assign youtube_id = video_url | split: 'youtu.be/' | last | split: '?' | first -%}
+
+            {% elsif video_url contains 'youtube.com/watch?v=' %}
+
+              {%- assign youtube_id = video_url | split: 'v=' | last | split: '&' | first -%}
+
+            {% elsif video_url contains 'youtube.com/embed/' %}
+
+              {%- assign youtube_id = video_url | split: 'embed/' | last | split: '?' | first -%}
+
+            {% elsif video_url contains 'youtube.com/shorts/' %}
+
+              {%- assign youtube_id = video_url | split: 'shorts/' | last | split: '?' | first -%}
+
+            {% endif %}
+
+          {% endif %}
+
+
+          <article
+            class="youtube-video-card youtube-video-card--{{ block.settings.video_orientation }}"
+            {{ block.shopify_attributes }}
+          >
+
+
+            <div
+              class="
+                youtube-video-card__media-wrapper
+                youtube-video-card__media-wrapper--{{ block.settings.video_alignment }}
+              "
+            >
+
+              <div
+                class="
+                  youtube-video-card__media
+                  youtube-video-card__media--{{ block.settings.video_orientation }}
+                "
+              >
+
+                {% if youtube_id != blank %}
+
+                  <iframe
+                    src="https://www.youtube-nocookie.com/embed/{{ youtube_id }}?rel=0&modestbranding=1"
+                    title="{% if block.settings.title != blank %}{{ block.settings.title | escape }}{% else %}Video de YouTube{% endif %}"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+
+                {% else %}
+
+                  <div class="youtube-video-card__placeholder">
+                    Agrega una URL válida de YouTube desde el editor del tema.
+                  </div>
+
+                {% endif %}
+
+              </div>
+
+            </div>
+
+
+
+            {% if block.settings.title != blank or block.settings.text != blank %}
+
+              <div class="youtube-video-card__content">
+
+                {% if block.settings.title != blank %}
+
+                  <h3 class="youtube-video-card__title">
+                    {{ block.settings.title }}
+                  </h3>
+
+                {% endif %}
+
+
+                {% if block.settings.text != blank %}
+
+                  <div class="youtube-video-card__text">
+                    {{ block.settings.text }}
+                  </div>
+
+                {% endif %}
+
+              </div>
+
+            {% endif %}
+
+          </article>
+
+        {% endfor %}
+
+      </div>
+
+
+
+      {% if section.settings.show_mobile_arrows %}
+
+        <div class="youtube-videos__mobile-nav">
+
+          <button
+            type="button"
+            class="youtube-videos__arrow youtube-videos__arrow--prev"
+            aria-label="Video anterior"
+            data-youtube-prev="{{ section.id }}"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M15 18L9 12L15 6"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="youtube-videos__arrow youtube-videos__arrow--next"
+            aria-label="Siguiente video"
+            data-youtube-next="{{ section.id }}"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M9 18L15 12L9 6"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+          </button>
+
+        </div>
+
+      {% endif %}
+
+
+    {% else %}
+
+      <div style="text-align:center; padding:40px 20px;">
+        Agrega bloques de video desde el editor del tema.
+      </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+
+<script>
+  (() => {
+
+    const initYoutubeCarousel = () => {
+
+      const section = document.querySelector(
+        '[data-youtube-videos-section="{{ section.id }}"]'
+      );
+
+      if (!section) return;
+
+
+      const track = section.querySelector(
+        '.youtube-videos__track'
+      );
+
+      const previousButton = section.querySelector(
+        '[data-youtube-prev="{{ section.id }}"]'
+      );
+
+      const nextButton = section.querySelector(
+        '[data-youtube-next="{{ section.id }}"]'
+      );
+
+
+      if (!track) return;
+
+
+      const getScrollAmount = () => {
+
+        const card = track.querySelector(
+          '.youtube-video-card'
+        );
+
+        if (!card) {
+          return track.clientWidth * 0.85;
+        }
+
+
+        const styles = window.getComputedStyle(track);
+
+        const gap = parseFloat(
+          styles.columnGap ||
+          styles.gap ||
+          0
+        );
+
+
+        return card.getBoundingClientRect().width + gap;
+
+      };
+
+
+      if (previousButton) {
+
+        previousButton.addEventListener(
+          'click',
+          () => {
+
+            track.scrollBy({
+              left: -getScrollAmount(),
+              behavior: 'smooth'
+            });
+
+          }
+        );
+
+      }
+
+
+      if (nextButton) {
+
+        nextButton.addEventListener(
+          'click',
+          () => {
+
+            track.scrollBy({
+              left: getScrollAmount(),
+              behavior: 'smooth'
+            });
+
+          }
+        );
+
+      }
+
+    };
+
+
+    if (document.readyState === 'loading') {
+
+      document.addEventListener(
+        'DOMContentLoaded',
+        initYoutubeCarousel,
+        { once: true }
+      );
+
+    } else {
+
+      initYoutubeCarousel();
+
+    }
+
+  })();
+</script>
+
+
+{% schema %}
+{
+  "name": "Videos YouTube carrusel",
+  "tag": "section",
+  "class": "section-youtube-videos",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Nuestros videos"
+    },
+
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción"
+    },
+
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Alineación del encabezado",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 18,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño título desktop",
+      "default": 32
+    },
+
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 18,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño título móvil",
+      "default": 26
+    },
+
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio debajo del encabezado",
+      "default": 28
+    },
+
+
+    {
+      "type": "header",
+      "content": "Distribución"
+    },
+
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Columnas en desktop",
+      "default": 3
+    },
+
+    {
+      "type": "range",
+      "id": "gap_desktop",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre videos desktop",
+      "default": 24
+    },
+
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre videos móvil",
+      "default": 14
+    },
+
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "min": 70,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Ancho tarjeta móvil",
+      "default": 88,
+      "info": "88% deja visible una parte del siguiente video."
+    },
+
+    {
+      "type": "range",
+      "id": "video_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Redondeado del video",
+      "default": 0
+    },
+
+
+    {
+      "type": "header",
+      "content": "Videos verticales"
+    },
+
+    {
+      "type": "range",
+      "id": "vertical_width_desktop",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Ancho video vertical desktop",
+      "default": 65
+    },
+
+    {
+      "type": "range",
+      "id": "vertical_max_width",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho máximo video vertical",
+      "default": 400
+    },
+
+    {
+      "type": "range",
+      "id": "vertical_width_mobile",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Ancho video vertical móvil",
+      "default": 75
+    },
+
+
+    {
+      "type": "header",
+      "content": "Texto de cada video"
+    },
+
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Alineación del texto",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "item_title_size_desktop",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño título video desktop",
+      "default": 18
+    },
+
+    {
+      "type": "range",
+      "id": "item_title_size_mobile",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño título video móvil",
+      "default": 17
+    },
+
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Peso del título",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "card_text_size",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño descripción",
+      "default": 14
+    },
+
+    {
+      "type": "range",
+      "id": "card_text_spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre video y texto",
+      "default": 18
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo de sección",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color título sección",
+      "default": "#000000"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color descripción sección",
+      "default": "#666666"
+    },
+
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Color título videos",
+      "default": "#333333"
+    },
+
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Color descripción videos",
+      "default": "#666666"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Carrusel móvil"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_mobile_arrows",
+      "label": "Mostrar flechas",
+      "default": true
+    },
+
+    {
+      "type": "select",
+      "id": "mobile_nav_alignment",
+      "label": "Posición de flechas",
+      "default": "center",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "flex-end",
+          "label": "Derecha"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "mobile_nav_spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio antes de flechas",
+      "default": 18
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_background",
+      "label": "Fondo flecha",
+      "default": "#1881C1"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Icono flecha",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_border_color",
+      "label": "Borde flecha",
+      "default": "#1881C1"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_hover_background",
+      "label": "Fondo flecha hover",
+      "default": "#BD0D65"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_hover_color",
+      "label": "Icono flecha hover",
+      "default": "#FFFFFF"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Ancho de la sección"
+    },
+
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Ancho",
+      "default": "fixed",
+      "options": [
+        {
+          "value": "fixed",
+          "label": "Contenido limitado"
+        },
+        {
+          "value": "full",
+          "label": "Ancho completo"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 900,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Ancho máximo",
+      "default": 1400
+    },
+
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Margen lateral desktop",
+      "default": 24
+    },
+
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Margen lateral móvil",
+      "default": 16
+    },
+
+
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior desktop",
+      "default": 40
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior desktop",
+      "default": 40
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding superior móvil",
+      "default": 30
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding inferior móvil",
+      "default": 30
+    }
+
+  ],
+
+
+  "blocks": [
+
+    {
+      "type": "video",
+      "name": "Video YouTube",
+
+      "settings": [
+
+        {
+          "type": "url",
+          "id": "youtube_url",
+          "label": "URL de YouTube",
+          "info": "Acepta youtube.com, youtu.be, embed y YouTube Shorts."
+        },
+
+        {
+          "type": "select",
+          "id": "video_orientation",
+          "label": "Formato del video",
+          "default": "horizontal",
+          "options": [
+            {
+              "value": "horizontal",
+              "label": "Horizontal 16:9"
+            },
+            {
+              "value": "vertical",
+              "label": "Vertical 9:16"
+            }
+          ]
+        },
+
+        {
+          "type": "select",
+          "id": "video_alignment",
+          "label": "Alineación del video",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Izquierda"
+            },
+            {
+              "value": "center",
+              "label": "Centro"
+            },
+            {
+              "value": "right",
+              "label": "Derecha"
+            }
+          ]
+        },
+
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Título del video"
+        },
+
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Descripción"
+        }
+
+      ]
+
+    }
+
+  ],
+
+
+  "max_blocks": 20,
+
+
+  "presets": [
+
+    {
+      "name": "Videos YouTube carrusel",
+
+      "blocks": [
+        {
+          "type": "video"
+        },
+        {
+          "type": "video"
+        },
+        {
+          "type": "video"
+        }
+      ]
+
+    }
+
+  ]
+
+}
+{% endschema %}

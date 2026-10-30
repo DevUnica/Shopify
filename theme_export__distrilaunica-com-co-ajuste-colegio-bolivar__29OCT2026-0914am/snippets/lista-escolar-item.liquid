@@ -1,0 +1,238 @@
+{% comment %}
+  Renderiza un útil individual de la lista escolar.
+
+  Acepta:
+  - item_product: {Object} Objeto producto de Shopify
+  - item_variant: {Object} Variante de Shopify
+  - item_quantity: {Number} Cantidad inicial sugerida
+  - item_available: {Boolean} Disponibilidad de inventario
+  - index: {Number} Índice para IDs de accesibilidad
+  - section_id: {String} ID de la sección
+  - show_image: {Boolean}
+  - show_sku: {Boolean}
+{% endcomment %}
+{%- liquid
+  assign item_min = 1
+  assign item_step = 1
+  assign item_max = nil
+
+  if item_variant.quantity_rule
+    assign item_min = item_variant.quantity_rule.min | default: 1
+    assign item_step = item_variant.quantity_rule.increment | default: 1
+    assign item_max = item_variant.quantity_rule.max
+  endif
+
+  if item_variant.inventory_management != blank and item_variant.inventory_policy == 'deny' and item_variant.inventory_quantity != blank
+    if item_max == nil or item_variant.inventory_quantity < item_max
+      assign item_max = item_variant.inventory_quantity
+    endif
+  endif
+
+  if item_max != nil and item_max < item_min
+    assign item_available = false
+  endif
+
+  assign item_quantity = item_quantity | default: item_min | plus: 0
+  if item_quantity < item_min
+    assign item_quantity = item_min
+  endif
+  if item_max != nil and item_quantity > item_max
+    assign item_quantity = item_max
+  endif
+  if item_quantity < 1
+    assign item_quantity = 1
+  endif
+
+  assign item_image = item_variant.featured_image | default: item_product.featured_image
+  assign item_qty_input_id = 'ListaEscolarQuantity-' | append: section_id | append: '-' | append: index
+  assign item_check_id = 'ListaEscolarCheck-' | append: section_id | append: '-' | append: index
+  assign has_multiple_variants = false
+  if item_product.variants.size > 1
+    assign has_multiple_variants = true
+  endif
+-%}
+<li
+  class="lista-escolar__item{% unless item_available %} is-unavailable{% endunless %}"
+  data-lista-escolar-item
+  data-variant-id="{{ item_variant.id }}"
+  data-price="{{ item_variant.price }}"
+  data-min="{{ item_min }}"
+  data-step="{{ item_step }}"
+  {% if item_max != nil %}data-max="{{ item_max }}"{% endif %}
+  data-available="{{ item_available }}"
+  data-default-quantity="{{ item_quantity }}"
+>
+  <div class="lista-escolar__check">
+    <input
+      type="checkbox"
+      class="lista-escolar__checkbox"
+      id="{{ item_check_id }}"
+      data-lista-escolar-checkbox
+      {% if item_available %}checked{% else %}disabled aria-disabled="true"{% endif %}
+      aria-label="Incluir {{ item_product.title | escape }} en la lista"
+    >
+    <label for="{{ item_check_id }}" class="visually-hidden">
+      Incluir en la lista
+    </label>
+  </div>
+
+  <div class="lista-escolar__media">
+    {%- if show_image and item_image != blank -%}
+      {{
+        item_image
+        | image_url: width: 200
+        | image_tag:
+          loading: 'lazy',
+          class: 'lista-escolar__image',
+          widths: '100, 160, 200',
+          sizes: '80px',
+          alt: item_image.alt,
+          data-lista-escolar-image: true
+      }}
+    {%- else -%}
+      <div class="lista-escolar__image lista-escolar__image--placeholder">
+        {%- render 'icon-products' -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="lista-escolar__info">
+    <a class="lista-escolar__title" href="{{ item_product.url }}" target="_blank" rel="noopener">
+      {{- item_product.title | escape -}}
+    </a>
+
+    {%- if has_multiple_variants -%}
+      <div class="lista-escolar__variant-picker">
+        <label for="variant-{{ section_id }}-{{ index }}" class="visually-hidden">Variante de {{ item_product.title | escape }}</label>
+        <select
+          id="variant-{{ section_id }}-{{ index }}"
+          class="lista-escolar__variant-select"
+          data-lista-escolar-variant-select
+          aria-label="Seleccionar variante"
+        >
+          {%- for variant in item_product.variants -%}
+            {%- liquid
+              assign v_available = variant.available
+              assign v_min = 1
+              assign v_step = 1
+              assign v_max = nil
+
+              if variant.quantity_rule
+                assign v_min = variant.quantity_rule.min | default: 1
+                assign v_step = variant.quantity_rule.increment | default: 1
+                assign v_max = variant.quantity_rule.max
+              endif
+
+              if variant.inventory_management != blank and variant.inventory_policy == 'deny' and variant.inventory_quantity != blank
+                if v_max == nil or variant.inventory_quantity < v_max
+                  assign v_max = variant.inventory_quantity
+                endif
+              endif
+
+              if v_max != nil and v_max < v_min
+                assign v_available = false
+              endif
+            -%}
+            <option
+              value="{{ variant.id }}"
+              data-price="{{ variant.price }}"
+              data-min="{{ v_min }}"
+              data-step="{{ v_step }}"
+              {% if v_max != nil %}data-max="{{ v_max }}"{% endif %}
+              data-available="{{ v_available }}"
+              {% if variant.featured_image %}data-image-src="{{ variant.featured_image | image_url: width: 200 }}" data-image-srcset="{{ variant.featured_image | image_url: width: 100 }} 100w, {{ variant.featured_image | image_url: width: 160 }} 160w, {{ variant.featured_image | image_url: width: 200 }} 200w"{% endif %}
+              {% if variant.sku != blank %}data-sku="{{ variant.sku | escape }}"{% endif %}
+              {% if variant.id == item_variant.id %}selected="selected"{% endif %}
+            >
+              {{ variant.title | escape }} — {{ variant.price | money }}{% unless v_available %} ({{ 'products.product.sold_out' | t }}){% endunless %}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    {%- elsif item_product.variants.first.title != 'Default Title' and item_variant.title != blank -%}
+      <p class="lista-escolar__variant text-subtext">{{ item_variant.title | escape }}</p>
+    {%- endif -%}
+
+    {%- if show_sku -%}
+      <p class="lista-escolar__sku text-subtext" data-lista-escolar-sku{% if item_variant.sku == blank %} hidden{% endif %}>
+        SKU: <span data-lista-escolar-sku-val>{{ item_variant.sku | escape }}</span>
+      </p>
+    {%- endif -%}
+
+    <p class="lista-escolar__unit-price text-subtext" data-lista-escolar-unit-price>
+      {%- if item_variant.compare_at_price > item_variant.price -%}
+        <s>{{ item_variant.compare_at_price | money }}</s>
+      {%- endif -%}
+      <span data-lista-escolar-price-val>{{ item_variant.price | money }}</span>
+    </p>
+
+    <div class="lista-escolar__badges">
+      <span class="lista-escolar__badge lista-escolar__badge--soldout" data-lista-escolar-soldout-badge{% if item_available %} hidden{% endif %}>
+        {{- 'products.product.sold_out' | t -}}
+      </span>
+      <span class="lista-escolar__badge lista-escolar__badge--omitted" data-lista-escolar-omitted-badge hidden>
+        No incluido
+      </span>
+    </div>
+  </div>
+
+  <div class="lista-escolar__quantity-wrap">
+    <div class="quantity lista-escolar__quantity">
+      <button
+        class="quantity__button"
+        name="minus"
+        type="button"
+        data-lista-escolar-decrease
+        aria-label="{{ 'products.product.quantity.decrease' | t: product: item_product.title | escape }}"
+        {% unless item_available %}disabled{% endunless %}
+      >
+        {%- render 'icon-minus' -%}
+      </button>
+      <input
+        class="quantity__input"
+        id="{{ item_qty_input_id }}"
+        type="number"
+        inputmode="numeric"
+        name="quantity"
+        value="{{ item_quantity }}"
+        min="{{ item_min }}"
+        step="{{ item_step }}"
+        {% if item_max != nil %}max="{{ item_max }}"{% endif %}
+        data-lista-escolar-quantity
+        aria-label="{{ 'products.product.quantity.input_label' | t: product: item_product.title | escape }}"
+        {% unless item_available %}disabled{% endunless %}
+      >
+      <button
+        class="quantity__button"
+        name="plus"
+        type="button"
+        data-lista-escolar-increase
+        aria-label="{{ 'products.product.quantity.increase' | t: product: item_product.title | escape }}"
+        {% unless item_available %}disabled{% endunless %}
+      >
+        {%- render 'icon-plus' -%}
+      </button>
+    </div>
+  </div>
+
+  <div class="lista-escolar__subtotal-wrap">
+    <span class="lista-escolar__line-total" data-lista-escolar-line-total>
+      {%- if item_available -%}
+        {{ item_variant.price | times: item_quantity | money }}
+      {%- else -%}
+        {{ 'products.product.sold_out' | t }}
+      {%- endif -%}
+    </span>
+  </div>
+
+  <button
+    class="lista-escolar__remove"
+    type="button"
+    data-lista-escolar-remove
+    title="Omitir este útil de la lista"
+    aria-label="Quitar {{ item_product.title | escape }} de la lista"
+    {% unless item_available %}disabled{% endunless %}
+  >
+    {%- render 'icon-close', size: 'small' -%}
+  </button>
+</li>
